@@ -1,4 +1,4 @@
-package models;
+package be.TFTIC.Tournoi.dl.entities;
 
 import lombok.*;
 import jakarta.persistence.*;
