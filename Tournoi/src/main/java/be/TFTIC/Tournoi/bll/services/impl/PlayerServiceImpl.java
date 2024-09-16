@@ -1,4 +1,4 @@
-package be.TFTIC.Tournoi.bll.services.security.impl;
+package be.TFTIC.Tournoi.bll.services.impl;
 
 public class PlayerServiceImpl {
 }

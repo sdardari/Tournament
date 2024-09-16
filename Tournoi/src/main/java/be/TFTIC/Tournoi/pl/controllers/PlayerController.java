@@ -1,4 +1,4 @@
-package be.TFTIC.Tournoi.pl.controllers.security;
+package be.TFTIC.Tournoi.pl.controllers;
 
 public class PlayerController {
 }
