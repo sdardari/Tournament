@@ -9,17 +9,17 @@ import java.util.List;
 @Table(name = "venues")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Venue {
+public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long venueId;
+    private Long Id;
 
     @Column(nullable = false)
-    private String nom;
+    private String name;
 
     @Column(nullable = false)
-    private String lieu;
+    private String place;
 
     // One-to-many relation with Tournaments
     @OneToMany(mappedBy = "venue")
