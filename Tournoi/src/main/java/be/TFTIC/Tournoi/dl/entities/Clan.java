@@ -18,7 +18,6 @@ public class Clan {
     @Column(nullable = false)
     private String nomClan;
 
-    // One-to-many relation with Players
-    @OneToMany(mappedBy = "clan")
-    private List<Player> players = new ArrayList<>();
+
+
 }

@@ -6,35 +6,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "players")
+@Table(name = "User_")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Player {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long playerId;
 
     @Column(nullable = false)
-    private String nom;
+    private String name;
 
     @Column(nullable = false)
-    private String prenom;
+    private String lastname;
 
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
-    private Integer classement;
+    private Integer ranking;
 
-    // Many-to-many relation with Teams
-    @ManyToMany
-    @JoinTable(
-            name = "players_teams",
-            joinColumns = @JoinColumn(name = "player_id"),
-            inverseJoinColumns = @JoinColumn(name = "team_id")
-    )
-    private List<Team> teams = new ArrayList<>();
 
     // Many-to-one relation with Clan
     @ManyToOne

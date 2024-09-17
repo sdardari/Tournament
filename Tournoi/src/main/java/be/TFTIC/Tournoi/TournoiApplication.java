@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TournoiApplication {
     public static void main(String[] args) {
-
+        SpringApplication.run(TournoiApplication.class,args);
     }
 // la branche dev
 }
