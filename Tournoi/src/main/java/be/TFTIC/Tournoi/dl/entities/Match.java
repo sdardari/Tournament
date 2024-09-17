@@ -22,7 +22,8 @@ public class Match {
 
     @JoinColumn(name = "team_2_id", nullable = false)
     private String team2;
-    @JoinColumn(name = "team_2_id", nullable = false)
+
+    @JoinColumn(name = "team_3_id", nullable = false)
     private String team3;
 
 
