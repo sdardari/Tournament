@@ -3,6 +3,8 @@ package be.TFTIC.Tournoi.dl.entities;
 import lombok.*;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "matches")
 @NoArgsConstructor
@@ -13,23 +15,37 @@ public class Match {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long matchId;
 
-    @ManyToOne
-    @JoinColumn(name = "team_1_id")
-    private Team team1;
+
+    @JoinColumn(name = "team_1_id", nullable = false)
+    private String team1;
+
+
+    @JoinColumn(name = "team_2_id", nullable = false)
+    private String team2;
+    @JoinColumn(name = "team_2_id", nullable = false)
+    private String team3;
+
 
     @ManyToOne
-    @JoinColumn(name = "team_2_id")
-    private Team team2;
+    @JoinColumn(name="LocationId", nullable = false)
+    private Place place;
 
-    private Integer scoreTeam1;
-    private Integer scoreTeam2;
 
-    @ManyToOne
-    @JoinColumn(name = "winner_team_id")
-    private Team winner;
+    @Column(nullable = false)
+    private Integer scoreTeam1Set1;
+    @Column(nullable = false)
+    private Integer scoreTeam2Set1;
 
-    // Many-to-one relation with Tournament
-    @ManyToOne
-    @JoinColumn(name = "tournament_id")
-    private Tournament tournament;
+    @Column(nullable = false)
+    private Integer scoreTeam1Set2;
+    @Column(nullable = false)
+    private Integer scoreTeam2Set2;
+
+
+    @Column(nullable = true)
+    private Integer scoreTeam2Set3;
+    @Column(nullable = true)
+    private Integer scoreTeam1Set3;
+
+    private LocalDate dateOfMatch;
 }

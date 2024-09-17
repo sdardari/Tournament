@@ -13,21 +13,21 @@ import java.util.List;
 public class Team {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long teamId;
+    private String teamId;
 
-    // Many-to-many relation with Players
-    @ManyToMany(mappedBy = "teams")
-    private List<Player> players = new ArrayList<>();
+    private String name;
 
-    // One-to-many relation with Matches (Team 1 and Team 2)
-    @OneToMany(mappedBy = "team1")
-    private List<Match> matchesAsTeam1 = new ArrayList<>();
+    // Many-to-one relation with Players
+    @ManyToOne
+    @JoinColumn(name= "user1", nullable = false)
+    private User user1;
 
-    @OneToMany(mappedBy = "team2")
-    private List<Match> matchesAsTeam2 = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "user2", nullable = false)
+    private User user2;
 
-    // Many-to-many relation with Tournaments via Registration
-    @OneToMany(mappedBy = "team")
-    private List<Registration> registrations = new ArrayList<>();
+    public Team(User user1, User user2){
+        this.user1=user1;
+        this.user2=user2;
+    }
 }
