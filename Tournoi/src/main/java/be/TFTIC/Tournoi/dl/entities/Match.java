@@ -22,6 +22,9 @@ public class Match {
 
     @JoinColumn(name = "team_2_id", nullable = false)
     private String team2;
+    @JoinColumn(name = "team_2_id", nullable = false)
+    private String team3;
+
 
     @ManyToOne
     @JoinColumn(name="LocationId", nullable = false)
