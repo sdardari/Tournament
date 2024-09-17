@@ -27,7 +27,6 @@ public class User {
     @Column(nullable = false)
     private Integer ranking;
 
-
     // Many-to-one relation with Clan
     @ManyToOne
     @JoinColumn(name = "clan_id")
