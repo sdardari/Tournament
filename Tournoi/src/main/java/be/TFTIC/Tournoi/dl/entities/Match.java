@@ -15,11 +15,16 @@ public class Match {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long matchId;
 
+
     @JoinColumn(name = "team_1_id", nullable = false)
     private String team1;
 
+
     @JoinColumn(name = "team_2_id", nullable = false)
     private String team2;
+    @JoinColumn(name = "team_2_id", nullable = false)
+    private String team3;
+
 
     @ManyToOne
     @JoinColumn(name="LocationId", nullable = false)
