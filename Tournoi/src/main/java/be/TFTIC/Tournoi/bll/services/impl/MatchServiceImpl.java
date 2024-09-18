@@ -5,6 +5,7 @@ import be.TFTIC.Tournoi.dal.repositories.MatchRepository;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.User;
+import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,23 +35,16 @@ public class MatchServiceImpl implements MatchService {
      * @return enregistre dans la DB le match
      */
     public Match createMatch(Match match) {
-
-
         return matchRepository.save(match);
         }
 
-    @Override
-    public String creatTeam(Long user1, Long user2) {
-        User player1 = getById(user1);
-        User player2 = getById(user2);
-
-
-
-        return "";
-    }
 
     @Override
-    public void update(Long id, Match match) {
+    public void update(Long id, MatchForm matchForm) {
+        Match match = getById(id);
+
+        match.setTeam1Players(matchForm.);
+    Match oldMatch = getById(id);
 
     }
 
