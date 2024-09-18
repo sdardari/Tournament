@@ -2,8 +2,8 @@ package be.TFTIC.Tournoi.bll.services;
 
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
-import be.TFTIC.Tournoi.pl.models.user.UserDTO;
-import be.TFTIC.Tournoi.pl.models.user.UserForm;
+import be.TFTIC.Tournoi.pl.models.User.UserDTO;
+import be.TFTIC.Tournoi.pl.models.User.UserForm;
 import be.TFTIC.Tournoi.pl.models.authDTO.UserRegisterForm;
 
 import java.util.List;
