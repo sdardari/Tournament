@@ -1,4 +1,7 @@
 package be.TFTIC.Tournoi.dal.repositories;
 
-public interface TeamRepository {
+import be.TFTIC.Tournoi.dl.entities.Team;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TeamRepository extends JpaRepository<Team, Long> {
 }
