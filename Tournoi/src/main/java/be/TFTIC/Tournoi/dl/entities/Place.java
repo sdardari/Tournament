@@ -19,7 +19,4 @@ public class Place {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(nullable = false)
     private Address address;
-
-
-
 }

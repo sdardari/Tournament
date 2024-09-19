@@ -29,4 +29,13 @@ import lombok.Setter;
         public String toString() {
             return street + " " + number + ", " + postalCode + " " + city + ", " + country;
         }
+
+        public Address(String street, String number, String postalCode, String city, String country) {
+            this.street = street;
+            this.number = number;
+            this.postalCode = postalCode;
+            this.city = city;
+            this.country = country;
+        }
+
     }

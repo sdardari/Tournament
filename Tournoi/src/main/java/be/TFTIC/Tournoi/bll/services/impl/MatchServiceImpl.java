@@ -29,15 +29,9 @@ public class MatchServiceImpl implements MatchService {
                 .orElseThrow(() -> new RuntimeException("Le post avec cette id:" + id + "n'existe pas"));
     }
 
-    /**
-     * Création d'un match
-     * @param match instance Match
-     * @return enregistre dans la DB le match
-     */
     public Match createMatch(Match match) {
         return matchRepository.save(match);
         }
-
 
     @Override
     public void update(Long id, MatchForm matchForm) {
@@ -54,34 +48,29 @@ public class MatchServiceImpl implements MatchService {
         oldMatch.setScoreTeam2Set3(matchForm.scoreTeam2Set3());
 
         matchRepository.save(oldMatch);
-
-
     }
 
     @Override
     public void delete(Long id) {
-
+        Match oldMatch = getById(id);
+        matchRepository.delete(oldMatch);
     }
 
-
+    @Override
     public String determineMatchWinner(Match match) {
             int team1Wins = 0;
             int team2Wins = 0;
 
-            if (determineSetWinner(match.getScoreTeam1Set1(), match.getScoreTeam2Set1()).equals("Team 1")) team1Wins++;
-            if (determineSetWinner(match.getScoreTeam1Set2(), match.getScoreTeam2Set2()).equals("Team 1")) team1Wins++;
-            if (match.getScoreTeam1Set3() != null && determineSetWinner(match.getScoreTeam1Set3(), match.getScoreTeam2Set3()).equals("Team 1")) team1Wins++;
+            if (determinerSetWinner(match.getScoreTeam1Set1(), match.getScoreTeam2Set1()).equals("Team 1")) team1Wins++;
+            if (determinerSetWinner(match.getScoreTeam1Set2(), match.getScoreTeam2Set2()).equals("Team 1")) team1Wins++;
+            if (match.getScoreTeam1Set3() != null && determinerSetWinner(match.getScoreTeam1Set3(), match.getScoreTeam2Set3()).equals("Team 1")) team1Wins++;
 
             return team1Wins >= 2 ? "Team 1" : "Team 2";
         }
 
     @Override
     public String determinerSetWinner(int scoreTeam1, int scoreTeam2) {
-        return "";
+        return scoreTeam1 > scoreTeam2 ? "Team 1" : "Team 2";
     }
 
-
-        private String determineSetWinner(int scoreTeam1, int scoreTeam2) {
-            return scoreTeam1 > scoreTeam2 ? "Team 1" : "Team 2";
-        }
     }

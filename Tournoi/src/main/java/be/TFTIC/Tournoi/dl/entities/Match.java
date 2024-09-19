@@ -14,9 +14,9 @@ public class Match {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long matchId;
+    private Long Id;
 
-    // Concatenated IDs of players in team 1 and team 2 as strings
+
     @Column(name = "team_1_players", nullable = false)
     private String team1Players;
 
@@ -59,5 +59,8 @@ public class Match {
     private LocalDate dateOfMatch;
 
     public Match(@NotBlank String teamId1, @NotBlank String teamId2, @NotBlank Long placeId, Integer scoreTeam1Set1, Integer scoreTeam1Set2, Integer scoreTeam1Set3, Integer scoreTeam2Set1, Integer scoreTeam2Set2, Integer scoreTeam2Set3) {
+    }
+
+    public void setPlace(@NotBlank Long aLong) {
     }
 }

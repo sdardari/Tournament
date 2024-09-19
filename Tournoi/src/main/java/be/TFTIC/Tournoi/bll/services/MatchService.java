@@ -21,7 +21,4 @@ public interface MatchService {
     String determinerSetWinner(int scoreTeam1, int scoreTeam2);
     // endregion
 
-
-
-
 }
