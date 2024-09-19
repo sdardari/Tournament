@@ -2,14 +2,15 @@ package be.TFTIC.Tournoi.dl.entities;
 
 import lombok.*;
 import jakarta.persistence.*;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import org.hibernate.validator.constraints.Range;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "tournaments")
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
+@Getter @Setter
+@ToString @EqualsAndHashCode
 public class Tournament {
 
     @Id
@@ -23,18 +24,17 @@ public class Tournament {
     private String location;
 
     @Column(nullable = false)
-    private LocalDate dateDebut;
+    private LocalDateTime dateDebut;
+
+    private LocalDateTime dateFin;
 
     @Column(nullable = false)
-    private LocalDate dateFin;
-
-    @Column(nullable = false)
+    @Range(min=0)
     private int nbPlace;
 
-    // One-to-many relation with Matches
-
-
-    // Many-to-many relation with Teams via Registration
-
-
+    public Tournament(String name, String location, int nbPlace) {
+        this.name = name;
+        this.location = location;
+        this.nbPlace = nbPlace;
+    }
 }
