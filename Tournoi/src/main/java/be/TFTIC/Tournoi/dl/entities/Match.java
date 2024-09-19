@@ -61,6 +61,7 @@ public class Match {
     public Match(@NotBlank String teamId1, @NotBlank String teamId2, @NotBlank Long placeId, Integer scoreTeam1Set1, Integer scoreTeam1Set2, Integer scoreTeam1Set3, Integer scoreTeam2Set1, Integer scoreTeam2Set2, Integer scoreTeam2Set3) {
     }
 
+
     public void setPlace(@NotBlank Long aLong) {
     }
 }

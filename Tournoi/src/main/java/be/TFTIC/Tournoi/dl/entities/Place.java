@@ -4,6 +4,7 @@ import lombok.*;
 import jakarta.persistence.*;
 
 @Entity
+@Getter@Setter
 @Table(name = "place_of_club")
 @NoArgsConstructor
 @AllArgsConstructor
