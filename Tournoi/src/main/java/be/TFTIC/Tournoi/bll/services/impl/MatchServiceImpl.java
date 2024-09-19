@@ -41,10 +41,20 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public void update(Long id, MatchForm matchForm) {
-        Match match = getById(id);
+        Match oldMatch = getById(id);
 
-        match.setTeam1Players(matchForm.);
-    Match oldMatch = getById(id);
+        oldMatch.setTeam1Players(matchForm.teamId1());
+        oldMatch.setTeam2Players(matchForm.teamId2());
+        oldMatch.setPlace(matchForm.placeId());
+        oldMatch.setScoreTeam1Set1(matchForm.scoreTeam1Set1());
+        oldMatch.setScoreTeam2Set1(matchForm.scoreTeam2Set1());
+        oldMatch.setScoreTeam1Set2(matchForm.scoreTeam1Set2());
+        oldMatch.setScoreTeam2Set2(matchForm.scoreTeam2Set2());
+        oldMatch.setScoreTeam1Set3(matchForm.scoreTeam1Set3());
+        oldMatch.setScoreTeam2Set3(matchForm.scoreTeam2Set3());
+
+        matchRepository.save(oldMatch);
+
 
     }
 
