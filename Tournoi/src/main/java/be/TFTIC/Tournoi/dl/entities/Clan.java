@@ -18,6 +18,4 @@ public class Clan {
     @Column(nullable = false)
     private String nomClan;
 
-
-
 }

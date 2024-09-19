@@ -8,9 +8,9 @@ import java.util.Locale;
 
 public record MatchForm(
         @NotBlank
-    Long teamId1,
+    String teamId1,
     @NotBlank
-    Long teamId2,
+    String teamId2,
     @NotBlank
     Long placeId,
     @NotBlank

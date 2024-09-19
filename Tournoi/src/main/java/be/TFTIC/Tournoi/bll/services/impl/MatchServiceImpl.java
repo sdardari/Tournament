@@ -63,11 +63,7 @@ public class MatchServiceImpl implements MatchService {
 
     }
 
-    /**
-     * Méthode pour déterminer le gagnant du match
-     * @param match
-     * @return
-     */
+
     public String determineMatchWinner(Match match) {
             int team1Wins = 0;
             int team2Wins = 0;
@@ -84,12 +80,7 @@ public class MatchServiceImpl implements MatchService {
         return "";
     }
 
-    /**
-     * Méthode pour déterminer le gagnant d'un set
-     * @param scoreTeam1
-     * @param scoreTeam2
-     * @return
-     */
+
         private String determineSetWinner(int scoreTeam1, int scoreTeam2) {
             return scoreTeam1 > scoreTeam2 ? "Team 1" : "Team 2";
         }

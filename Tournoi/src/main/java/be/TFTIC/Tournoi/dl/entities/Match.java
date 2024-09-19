@@ -23,6 +23,15 @@ public class Match {
     @Column(name = "team_2_players", nullable = false)
     private String team2Players;
 
+    @Column(name = "name_team_1", nullable = true)
+    private String nameTeam1;
+    @Column(name = "name_team_2", nullable = true)
+    private String nameTeam2;
+    @Column(name = "name_clan_team_1", nullable = true)
+    private String nameClanTeam1;
+    @Column(name = "name_Clan_Team_2", nullable = true)
+    private String nameClanTeam2;
+
     @ManyToOne
     @JoinColumn(name = "LocationId", nullable = false)
     private Place place;
@@ -49,6 +58,6 @@ public class Match {
 
     private LocalDate dateOfMatch;
 
-    public Match(@NotBlank Long teamId1, @NotBlank Long teamId2, @NotBlank Long placeId, Integer scoreTeam1Set1, Integer scoreTeam1Set2, Integer scoreTeam1Set3, Integer scoreTeam2Set1, Integer scoreTeam2Set2, Integer scoreTeam2Set3) {
+    public Match(@NotBlank String teamId1, @NotBlank String teamId2, @NotBlank Long placeId, Integer scoreTeam1Set1, Integer scoreTeam1Set2, Integer scoreTeam1Set3, Integer scoreTeam2Set1, Integer scoreTeam2Set2, Integer scoreTeam2Set3) {
     }
 }

@@ -2,11 +2,9 @@ package be.TFTIC.Tournoi.dl.entities;
 
 import lombok.*;
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "place")
+@Table(name = "place_of_club")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Place {
@@ -16,10 +14,11 @@ public class Place {
     private Long Id;
 
     @Column(nullable = false)
-    private String name;
+    private String nameClub;
 
-    @Column(nullable = false)
-    private String localisation;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(nullable = false)
+    private Address address;
 
 
 
