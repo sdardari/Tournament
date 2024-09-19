@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.dl.entities;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -48,4 +49,6 @@ public class Match {
 
     private LocalDate dateOfMatch;
 
+    public Match(@NotBlank Long teamId1, @NotBlank Long teamId2, @NotBlank Long placeId, Integer scoreTeam1Set1, Integer scoreTeam1Set2, Integer scoreTeam1Set3, Integer scoreTeam2Set1, Integer scoreTeam2Set2, Integer scoreTeam2Set3) {
+    }
 }
