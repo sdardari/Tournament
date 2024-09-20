@@ -49,7 +49,6 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false,length = 20)
     private UserRole role;
-
     // Many-to-one relation with Clan
     @ManyToOne
     @JoinColumn(name = "clan_id")
@@ -61,6 +60,9 @@ public class User implements UserDetails {
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+    }
+
+    public User(String adminUser, String admin, String user, String mail, Object o, String admin123, UserRole userRole, Object o1) {
     }
 
     @Override

@@ -21,11 +21,10 @@ public class DataInitializer {
 
     private final PasswordEncoder passwordEncoder;
 
-
     @Bean
     CommandLineRunner initUsers(UserRepository userRepository) {
         return args -> {
-            if (userRepository.count() == 0) { // To avoid duplicate entries
+            if (userRepository.count() == 0) { // Pour éviter les entrées en double
                 userRepository.save(new User(null, "adminUser", "Admin", "User", "admin@example.com", null, passwordEncoder.encode("admin123"), UserRole.ADMIN, null));
                 userRepository.save(new User(null, "johnDoe", "John", "Doe", "john.doe@example.com", null, passwordEncoder.encode("password1"), UserRole.USER, null));
                 userRepository.save(new User(null, "janeDoe", "Jane", "Doe", "jane.doe@example.com", null, passwordEncoder.encode("password2"), UserRole.USER, null));
@@ -40,12 +39,12 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initAddresses(AddressRepository addressRepository) {
         return args -> {
-            if (addressRepository.count() == 0) {
-                addressRepository.save(new Address("Rue de la Paix", "10", "1000", "Bruxelles", "Belgique"));
-                addressRepository.save(new Address("Avenue Louise", "20", "1050", "Ixelles", "Belgique"));
-                addressRepository.save(new Address("Rue Royale", "50", "1210", "Saint-Josse", "Belgique"));
-                addressRepository.save(new Address("Boulevard de Waterloo", "35", "1000", "Bruxelles", "Belgique"));
-                addressRepository.save(new Address("Chaussée de Charleroi", "12", "1060", "Saint-Gilles", "Belgique"));
+            if (addressRepository.count() == 0) { // Vérifie que les adresses n'ont pas déjà été insérées
+                addressRepository.save(new Address(null, "Main Street", "123", "1000", "Bruxelles", "Belgique"));
+                addressRepository.save(new Address(null, "Avenue des Champs-Élysées", "12", "75008", "Paris", "France"));
+                addressRepository.save(new Address(null, "Oxford Street", "45", "W1D", "London", "United Kingdom"));
+                addressRepository.save(new Address(null, "Friedrichstrasse", "101", "10117", "Berlin", "Germany"));
+                addressRepository.save(new Address(null, "Piazza del Popolo", "3", "00187", "Rome", "Italy"));
             }
         };
     }
@@ -54,16 +53,20 @@ public class DataInitializer {
     CommandLineRunner initPlaces(PlaceRepository placeRepository, AddressRepository addressRepository) {
         return args -> {
             if (placeRepository.count() == 0) {
-                // Récupération des adresses pour les associer aux places
-                Address address1 = addressRepository.findById(1).orElse(null);
-                Address address2 = addressRepository.findById(2).orElse(null);
-                Address address3 = addressRepository.findById(3).orElse(null);
+                // Récupérer les adresses persistées depuis la base de données
+                Address address1 = addressRepository.findById(1L).orElseThrow(() -> new IllegalArgumentException("Address 1 not found"));
+                Address address2 = addressRepository.findById(2L).orElseThrow(() -> new IllegalArgumentException("Address 2 not found"));
+                Address address3 = addressRepository.findById(3L).orElseThrow(() -> new IllegalArgumentException("Address 3 not found"));
+                Address address4 = addressRepository.findById(4L).orElseThrow(() -> new IllegalArgumentException("Address 4 not found"));
+                Address address5 = addressRepository.findById(5L).orElseThrow(() -> new IllegalArgumentException("Address 5 not found"));
 
-                if (address1 != null && address2 != null && address3 != null) {
-                    placeRepository.save(new Place(null, "Padel Club Event Ottignies", address1));
-                    placeRepository.save(new Place(null, "Casa Del Padel", address2));
-                    placeRepository.save(new Place(null, "Padel Center Ixelles", address3));
-                }
+                // Créer les places en utilisant les adresses persistées
+                placeRepository.save(new Place("Padel Club Brussels", address1));
+                placeRepository.save(new Place("Champs-Élysées Padel", address2));
+                placeRepository.save(new Place("London Padel Center", address3));
+                placeRepository.save(new Place("Berlin Padel Arena", address4));
+                placeRepository.save(new Place("Rome Padel Stadium", address5));
+
             }
         };
     }

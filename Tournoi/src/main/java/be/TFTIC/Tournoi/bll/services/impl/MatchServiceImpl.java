@@ -15,8 +15,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MatchServiceImpl implements MatchService {
 
-        private final MatchRepository matchRepository;
-        private final UserRepository userRepository;
+    private final MatchRepository matchRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<Match> getAll() {
@@ -31,7 +31,7 @@ public class MatchServiceImpl implements MatchService {
 
     public Match createMatch(Match match) {
         return matchRepository.save(match);
-        }
+    }
 
     @Override
     public void update(Long id, MatchForm matchForm) {
@@ -58,19 +58,19 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public String determineMatchWinner(Match match) {
-            int team1Wins = 0;
-            int team2Wins = 0;
+        int team1Wins = 0;
+        int team2Wins = 0;
 
-            if (determinerSetWinner(match.getScoreTeam1Set1(), match.getScoreTeam2Set1()).equals("Team 1")) team1Wins++;
-            if (determinerSetWinner(match.getScoreTeam1Set2(), match.getScoreTeam2Set2()).equals("Team 1")) team1Wins++;
-            if (match.getScoreTeam1Set3() != null && determinerSetWinner(match.getScoreTeam1Set3(), match.getScoreTeam2Set3()).equals("Team 1")) team1Wins++;
+        if (determinerSetWinner(match.getScoreTeam1Set1(), match.getScoreTeam2Set1()).equals("Team 1")) team1Wins++;
+        if (determinerSetWinner(match.getScoreTeam1Set2(), match.getScoreTeam2Set2()).equals("Team 1")) team1Wins++;
+        if (match.getScoreTeam1Set3() != null && determinerSetWinner(match.getScoreTeam1Set3(), match.getScoreTeam2Set3()).equals("Team 1"))
+            team1Wins++;
 
-            return team1Wins >= 2 ? "Team 1" : "Team 2";
-        }
+        return team1Wins >= 2 ? "Team 1" : "Team 2";
+    }
 
     @Override
     public String determinerSetWinner(int scoreTeam1, int scoreTeam2) {
         return scoreTeam1 > scoreTeam2 ? "Team 1" : "Team 2";
     }
-
-    }
+}

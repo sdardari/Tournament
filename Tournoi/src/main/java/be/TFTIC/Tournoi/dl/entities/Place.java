@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 
 @Entity
 @Getter@Setter
-@Table(name = "place_of_club")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Place {
@@ -17,7 +16,11 @@ public class Place {
     @Column(nullable = false)
     private String nameClub;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(nullable = false)
+    @OneToOne
     private Address address;
+
+    public Place(String nameClub, Address address) {
+        this.nameClub = nameClub;
+        this.address = address;
+    }
 }
