@@ -9,6 +9,7 @@ import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -72,5 +73,28 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public String determinerSetWinner(int scoreTeam1, int scoreTeam2) {
         return scoreTeam1 > scoreTeam2 ? "Team 1" : "Team 2";
+    }
+
+    public  List<User> fromStringToUser(MatchForm matchForm) {
+        List<User> users = new ArrayList<>();
+
+        // Ici, pour votre bonne compréhension <3, je recupère dans un tableau les string entre "_".
+        String[] team1 = matchForm.teamId1().split("_");
+        String[] team2 = matchForm.teamId2().split("_");
+
+        // Je reprend le string que est soit avant ou après le "_" et les convertir en Long ID.
+        Long userId1 = Long.parseLong(team1[0]);
+        Long userId2 = Long.parseLong(team2[1]);
+
+        Long userId3 = Long.parseLong(team2[0]);
+        Long userId4 = Long.parseLong(team1[1]);
+
+        // Je les met dans une list.
+        users.add(userRepository.findById(userId1).orElseThrow(() -> new RuntimeException("User 1 not found")));
+        users.add(userRepository.findById(userId2).orElseThrow(() -> new RuntimeException("User 2 not found")));
+        users.add(userRepository.findById(userId3).orElseThrow(() -> new RuntimeException("User 3 not found")));
+        users.add(userRepository.findById(userId4).orElseThrow(() -> new RuntimeException("User 4 not found")));
+
+        return users;
     }
 }
