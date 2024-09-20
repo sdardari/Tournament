@@ -1,15 +1,13 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
 import be.TFTIC.Tournoi.bll.services.TournamentService;
-import be.TFTIC.Tournoi.dl.entities.Team;
-import be.TFTIC.Tournoi.dl.entities.User;
+
+import be.TFTIC.Tournoi.pl.models.team.TeamDTO;
 import be.TFTIC.Tournoi.pl.models.tournament.TournamentDTO;
 import be.TFTIC.Tournoi.pl.models.tournament.TournamentForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
@@ -38,8 +36,10 @@ public class TournamentController {
     }
 
     @GetMapping("/{tournoiId}/participants")
-    public ResponseEntity<List<Team>> getParticipant(@PathVariable long tournoiId){
-        List<Team> participants = tournamentService.getParticipant(tournoiId);
+    public ResponseEntity<List<TeamDTO>> getParticipant(@PathVariable long tournoiId){
+        List<TeamDTO> participants = tournamentService.getParticipant(tournoiId).stream()
+                .map(TeamDTO::fromEntity)
+                .toList();
         return ResponseEntity.ok(participants);
     }
 
