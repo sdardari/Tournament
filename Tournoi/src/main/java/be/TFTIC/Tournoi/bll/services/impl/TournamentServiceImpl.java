@@ -32,7 +32,7 @@ public class TournamentServiceImpl implements TournamentService {
         return tournamentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("The tournament with id " + id + " not found"));
     }
-
+// TODO DELETE 
     @Override
     public Long create(Tournament tournament) {
         tournament.setDateDebut(LocalDateTime.now());
