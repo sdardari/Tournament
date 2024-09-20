@@ -1,12 +1,15 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
 import be.TFTIC.Tournoi.bll.services.TournamentService;
-import be.TFTIC.Tournoi.dl.entities.Tournament;
+import be.TFTIC.Tournoi.dl.entities.Team;
+import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.pl.models.tournament.TournamentDTO;
 import be.TFTIC.Tournoi.pl.models.tournament.TournamentForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
@@ -34,6 +37,12 @@ public class TournamentController {
         return ResponseEntity.ok(tournament);
     }
 
+    @GetMapping("/{tournoiId}/participants")
+    public ResponseEntity<List<Team>> getParticipant(@PathVariable long tournoiId){
+        List<Team> participants = tournamentService.getParticipant(tournoiId);
+        return ResponseEntity.ok(participants);
+    }
+
     @PostMapping
     public ResponseEntity<Void> createTournament(@Valid @RequestBody TournamentForm form){
         Long id = tournamentService.create(form.toEntity());
@@ -41,6 +50,16 @@ public class TournamentController {
                 .path("/{id}")
                 .buildAndExpand(id);
         return ResponseEntity.created(uriComponents.toUri()).build();
+    }
+
+    @PostMapping("/{id}/inscription")
+    public ResponseEntity<String> inscriptionTournament(@PathVariable long id){
+        try {
+            tournamentService.inscription(id);
+            return ResponseEntity.ok("User registered successfully to the tournament.");
+        } catch (IllegalStateException e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @PutMapping("/{id}")

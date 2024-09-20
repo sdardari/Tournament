@@ -8,7 +8,6 @@ import java.util.List;
 @Entity
 @Table(name = "teams")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class Team {
 
@@ -18,16 +17,15 @@ public class Team {
     private String name;
 
     // Many-to-one relation with Players
-    @ManyToOne
-    @JoinColumn(name= "user1", nullable = false)
-    private User user1;
+    @ManyToMany
+    @JoinTable(
+            name= "users",
+            joinColumns = @JoinColumn(name = "team_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> users;
 
-    @ManyToOne
-    @JoinColumn(name = "user2", nullable = false)
-    private User user2;
-
-    public Team(User user1, User user2){
-        this.user1=user1;
-        this.user2=user2;
+    public Team(){
+        this.users = new ArrayList<>();
     }
 }
