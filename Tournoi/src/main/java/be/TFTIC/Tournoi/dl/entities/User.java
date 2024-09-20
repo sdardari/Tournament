@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.dl.entities;
 
+import be.TFTIC.Tournoi.dl.enums.CLanRole;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -39,7 +40,9 @@ public class User implements UserDetails {
     private String email;
 
     @Column
-    private Integer ranking;
+    private int ranking;
+
+
 
     @Setter
     @Column(nullable = false)
@@ -49,6 +52,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false,length = 20)
     private UserRole role;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private CLanRole cLanRole;
 
     // Many-to-one relation with Clan
     @ManyToOne
