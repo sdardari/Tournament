@@ -41,14 +41,14 @@ public class Match {
     private Tournament tournament;
 
     // Scores for each set
-    @Column(nullable = false)
+    @Column
     private Integer scoreTeam1Set1;
-    @Column(nullable = false)
+    @Column
     private Integer scoreTeam2Set1;
 
-    @Column(nullable = false)
+    @Column
     private Integer scoreTeam1Set2;
-    @Column(nullable = false)
+    @Column
     private Integer scoreTeam2Set2;
 
     @Column(nullable = true)
@@ -58,10 +58,11 @@ public class Match {
 
     private LocalDate dateOfMatch;
 
-    public Match(@NotBlank String teamId1, @NotBlank String teamId2, @NotBlank Long placeId, Integer scoreTeam1Set1, Integer scoreTeam1Set2, Integer scoreTeam1Set3, Integer scoreTeam2Set1, Integer scoreTeam2Set2, Integer scoreTeam2Set3) {
+
+    public Match(String teamId1, String teamId2, Long placeId, Integer scoreTeam1Set1, Integer scoreTeam1Set2, Integer scoreTeam1Set3, Integer scoreTeam2Set1, Integer scoreTeam2Set2, Integer scoreTeam2Set3, LocalDate dateOfMatch) {
     }
 
 
-    public void setPlace(@NotBlank Long aLong) {
+    public void setPlace(Long aLong) {
     }
 }

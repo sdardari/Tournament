@@ -1,6 +1,7 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
 import be.TFTIC.Tournoi.bll.services.MatchService;
+import be.TFTIC.Tournoi.bll.utils.UserUtils;
 import be.TFTIC.Tournoi.dal.repositories.MatchRepository;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Match;
@@ -37,6 +38,7 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public void update(Long id, MatchForm matchForm) {
         Match oldMatch = getById(id);
+        List<User> users = UserUtils.fromStringToUser(matchForm, userRepository);
 
         oldMatch.setTeam1Players(matchForm.teamId1());
         oldMatch.setTeam2Players(matchForm.teamId2());
@@ -75,26 +77,4 @@ public class MatchServiceImpl implements MatchService {
         return scoreTeam1 > scoreTeam2 ? "Team 1" : "Team 2";
     }
 
-    public  List<User> fromStringToUser(MatchForm matchForm) {
-        List<User> users = new ArrayList<>();
-
-        // Ici, pour votre bonne compréhension <3, je recupère dans un tableau les string entre "_".
-        String[] team1 = matchForm.teamId1().split("_");
-        String[] team2 = matchForm.teamId2().split("_");
-
-        // Je reprend le string que est soit avant ou après le "_" et les convertir en Long ID.
-        Long userId1 = Long.parseLong(team1[0]);
-        Long userId2 = Long.parseLong(team2[1]);
-
-        Long userId3 = Long.parseLong(team2[0]);
-        Long userId4 = Long.parseLong(team1[1]);
-
-        // Je les met dans une list.
-        users.add(userRepository.findById(userId1).orElseThrow(() -> new RuntimeException("User 1 not found")));
-        users.add(userRepository.findById(userId2).orElseThrow(() -> new RuntimeException("User 2 not found")));
-        users.add(userRepository.findById(userId3).orElseThrow(() -> new RuntimeException("User 3 not found")));
-        users.add(userRepository.findById(userId4).orElseThrow(() -> new RuntimeException("User 4 not found")));
-
-        return users;
-    }
 }

@@ -1,16 +1,12 @@
 package be.TFTIC.Tournoi.dl.entities;
 
 import be.TFTIC.Tournoi.dl.enums.UserRole;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,22 +16,28 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long Id;
 
     @Column(nullable = false)
+    @EqualsAndHashCode.Include
     private String username;
 
     @Column(nullable = false)
+    @EqualsAndHashCode.Include
     private String firstname;
 
     @Column(nullable = false)
+    @EqualsAndHashCode.Include
     private String lastname;
 
     @Column(nullable = false, unique = true)
+    @EqualsAndHashCode.Include
     private String email;
 
     @Column
@@ -60,9 +62,6 @@ public class User implements UserDetails {
         this.lastname = lastname;
         this.email = email;
         this.password = password;
-    }
-
-    public User(String adminUser, String admin, String user, String mail, Object o, String admin123, UserRole userRole, Object o1) {
     }
 
     @Override

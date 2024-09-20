@@ -49,25 +49,4 @@ public class DataInitializer {
         };
     }
 
-    @Bean
-    CommandLineRunner initPlaces(PlaceRepository placeRepository, AddressRepository addressRepository) {
-        return args -> {
-            if (placeRepository.count() == 0) {
-                // Récupérer les adresses persistées depuis la base de données
-                Address address1 = addressRepository.findById(1L).orElseThrow(() -> new IllegalArgumentException("Address 1 not found"));
-                Address address2 = addressRepository.findById(2L).orElseThrow(() -> new IllegalArgumentException("Address 2 not found"));
-                Address address3 = addressRepository.findById(3L).orElseThrow(() -> new IllegalArgumentException("Address 3 not found"));
-                Address address4 = addressRepository.findById(4L).orElseThrow(() -> new IllegalArgumentException("Address 4 not found"));
-                Address address5 = addressRepository.findById(5L).orElseThrow(() -> new IllegalArgumentException("Address 5 not found"));
-
-                // Créer les places en utilisant les adresses persistées
-                placeRepository.save(new Place("Padel Club Brussels", address1));
-                placeRepository.save(new Place("Champs-Élysées Padel", address2));
-                placeRepository.save(new Place("London Padel Center", address3));
-                placeRepository.save(new Place("Berlin Padel Arena", address4));
-                placeRepository.save(new Place("Rome Padel Stadium", address5));
-
-            }
-        };
-    }
 }
