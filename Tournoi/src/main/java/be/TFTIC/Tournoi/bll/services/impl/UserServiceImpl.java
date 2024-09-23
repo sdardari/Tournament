@@ -8,11 +8,13 @@ import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.User.UserForm;
 import be.TFTIC.Tournoi.pl.models.authDTO.UserRegisterForm;
+import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +22,9 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final DataSourceTransactionManagerAutoConfiguration dataSourceTransactionManagerAutoConfiguration;
+
+    //region CRUD
 
     @Override
     public UserDTO createUser(UserRegisterForm userForm) {
@@ -64,7 +69,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserRole getUserRole(Long id) {
-    User user= userRepository.findById(id).orElseThrow(() -> new RuntimeException("User with id " + id + " does not exist."));
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User with id " + id + " does not exist."));
         return user.getRole();
     }
 
@@ -92,4 +97,45 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    //endregion
+
+    //region UTILS
+    public List<User> fromStringToUser(MatchForm matchForm) {
+        //TODO FAIRE LA GESTION DES CHAINES DE CARACTERES
+        List<User> users = new ArrayList<>();
+
+        for (int i = 0; i < getSize(matchForm.getTeamId1()); i++) {
+            users.add(addUserFromMatchForm(matchForm.getTeamId1(),i));
+            users.add(addUserFromMatchForm(matchForm.getTeamId2(),i));
+        }
+        return users;
+    }
+
+    private int getSize(String team) {
+        return getPlayersOfTeam(team).size();
+    }
+
+    private User addUserFromMatchForm(String team, int id) {
+        return getById(parsePlayerId(getPlayersOfTeam(team), id));
+    }
+
+    private Long parsePlayerId(List<String> teams, int id) {
+        return Long.parseLong(teams.get(id));
+    }
+
+    private List<String> getPlayersOfTeam(String teamId) {
+        return Arrays.stream(teamId.split("_")).toList();
+    }
+
+    private User getById(Long id) {
+        StringBuilder sb = new StringBuilder();
+        return userRepository.findById(id).orElseThrow(() -> new RuntimeException(
+                sb.append("User ").append(id).append(" not found.").toString()));
+    }
+
+    //endregion
 }
+
+// je recupere ma team
+// je recupère les joueurs => 2 SINON j'en recupère 3,..
+//

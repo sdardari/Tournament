@@ -1,37 +1,39 @@
 package be.TFTIC.Tournoi.pl.models.matchDTO;
-
-
+import be.TFTIC.Tournoi.bll.services.PlaceService;
 import be.TFTIC.Tournoi.dl.entities.Match;
-import jakarta.validation.constraints.NotBlank;
+import be.TFTIC.Tournoi.dl.entities.Place;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Locale;
 
-public record MatchForm(
-    String teamId1,
-    String teamId2,
-    Long placeId,
-    Long tournamentId,
-    Integer scoreTeam1Set1,
-    Integer scoreTeam2Set1,
-    Integer scoreTeam1Set2,
-    Integer scoreTeam2Set2,
-    Integer scoreTeam1Set3,
-    Integer scoreTeam2Set3,
-    LocalDate dateOfMatch
-) {
+@Getter @Setter
+public class MatchForm {
+    private String teamId1;
+    private String teamId2;
+    private Long placeId;
+    private Integer scoreTeam1Set1;
+    private Integer scoreTeam2Set1;
+    private Integer scoreTeam1Set2;
+    private Integer scoreTeam2Set2;
+    private Integer scoreTeam1Set3;
+    private Integer scoreTeam2Set3;
+    private LocalDate dateOfMatch;
+
+    // Getters and setters
     public Match toEntity() {
-        return new Match(
-                teamId1,
-                teamId2,
-                placeId,
-                scoreTeam1Set1,
-                scoreTeam1Set2,
-                scoreTeam1Set3,
-                scoreTeam2Set1,
-                scoreTeam2Set2,
-                scoreTeam2Set3,
-                dateOfMatch
-        );
+
+        Match match = new Match();
+        match.setTeam1Players(this.teamId1);
+        match.setTeam2Players(this.teamId2);
+        match.setScoreTeam1Set1(this.scoreTeam1Set1);
+        match.setScoreTeam2Set1(this.scoreTeam2Set1);
+        match.setScoreTeam1Set2(this.scoreTeam1Set2);
+        match.setScoreTeam2Set2(this.scoreTeam2Set2);
+        match.setScoreTeam1Set3(this.scoreTeam1Set3);
+        match.setScoreTeam2Set3(this.scoreTeam2Set3);
+        match.setDateOfMatch(this.dateOfMatch);
+        return match;
     }
 }

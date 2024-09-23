@@ -1,9 +1,10 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
 import be.TFTIC.Tournoi.bll.services.MatchService;
-import be.TFTIC.Tournoi.bll.utils.UserUtils;
+import be.TFTIC.Tournoi.bll.services.PlaceService;
+import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dal.repositories.MatchRepository;
-import be.TFTIC.Tournoi.dal.repositories.UserRepository;
+
 import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
@@ -18,7 +19,8 @@ import java.util.List;
 public class MatchServiceImpl implements MatchService {
 
     private final MatchRepository matchRepository;
-    private final UserRepository userRepository;
+    private final PlaceService placeService;
+    private final UserService userService;
 
     @Override
     public List<Match> getAll() {
@@ -38,17 +40,17 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public void update(Long id, MatchForm matchForm) {
         Match oldMatch = getById(id);
-        List<User> users = UserUtils.fromStringToUser(matchForm, userRepository);
+        List<User> users = userService.fromStringToUser(matchForm);
 
-        oldMatch.setTeam1Players(matchForm.teamId1());
-        oldMatch.setTeam2Players(matchForm.teamId2());
-        oldMatch.setPlace(matchForm.placeId());
-        oldMatch.setScoreTeam1Set1(matchForm.scoreTeam1Set1());
-        oldMatch.setScoreTeam2Set1(matchForm.scoreTeam2Set1());
-        oldMatch.setScoreTeam1Set2(matchForm.scoreTeam1Set2());
-        oldMatch.setScoreTeam2Set2(matchForm.scoreTeam2Set2());
-        oldMatch.setScoreTeam1Set3(matchForm.scoreTeam1Set3());
-        oldMatch.setScoreTeam2Set3(matchForm.scoreTeam2Set3());
+        oldMatch.setTeam1Players(matchForm.getTeamId1());
+        oldMatch.setTeam2Players(matchForm.getTeamId2());
+        oldMatch.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
+        oldMatch.setScoreTeam1Set1(matchForm.getScoreTeam1Set1());
+        oldMatch.setScoreTeam2Set1(matchForm.getScoreTeam2Set1());
+        oldMatch.setScoreTeam1Set2(matchForm.getScoreTeam2Set2());
+        oldMatch.setScoreTeam2Set2(matchForm.getScoreTeam2Set2());
+        oldMatch.setScoreTeam1Set3(matchForm.getScoreTeam1Set3());
+        oldMatch.setScoreTeam2Set3(matchForm.getScoreTeam2Set3());
 
         matchRepository.save(oldMatch);
     }
