@@ -1,6 +1,6 @@
 package be.TFTIC.Tournoi.dl.enums;
 
-public enum CLanRole {
+public enum ClanRole {
     PRESIDENT,
     VICE_PRESIDENT,
     ELDER,

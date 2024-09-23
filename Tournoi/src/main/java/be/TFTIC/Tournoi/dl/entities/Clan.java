@@ -1,8 +1,6 @@
 package be.TFTIC.Tournoi.dl.entities;
 
-import be.TFTIC.Tournoi.dl.enums.CLanRole;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import lombok.*;
 import jakarta.persistence.*;
 
@@ -28,28 +26,32 @@ public class Clan {
     @Column
     private boolean isPrivate;
 
+    private String president;
 
     public boolean getIsPrivate() {
         return isPrivate;
     }
 
+
     @Column
     private int minimumTrophies=0;
 
-    @OneToMany(mappedBy = "clan", cascade=CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<User> members= new HashSet<>();
+    @ManyToMany
+    @JoinTable(
+            name = "user_clan",
+            joinColumns = @JoinColumn(name = "clan_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> members = new HashSet<>();
 
+
+
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CLanRole president;
-
-
-    // Vice Presidents and other roles could be managed in a separate set
-    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "clan_roles", joinColumns = @JoinColumn(name = "clan_id"))
-    @MapKeyJoinColumn(name = "user_id")
+    @MapKeyColumn(name ="user_id")
     @Column(name = "role")
-    private Map<User, CLanRole> roles = new HashMap<>();
+    private Map<Long, ClanRole> roles = new HashMap<>();
 
 
     public Clan (String name, boolean isPrivate, int minimumTrophies){

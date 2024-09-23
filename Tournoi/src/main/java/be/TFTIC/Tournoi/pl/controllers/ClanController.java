@@ -3,22 +3,21 @@ package be.TFTIC.Tournoi.pl.controllers;
 
 import be.TFTIC.Tournoi.bll.services.ClanService;
 import be.TFTIC.Tournoi.bll.services.UserService;
-import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Clan;
+import be.TFTIC.Tournoi.dl.entities.JoinRequest;
 import be.TFTIC.Tournoi.dl.entities.User;
-import be.TFTIC.Tournoi.dl.enums.CLanRole;
+import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.il.utils.JwtUtils;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.clan.CLanForm;
 import be.TFTIC.Tournoi.pl.models.clan.CLanFormCreate;
 import be.TFTIC.Tournoi.pl.models.clan.ClanDTO;
-import jakarta.servlet.http.HttpServletRequest;
+import be.TFTIC.Tournoi.pl.models.clan.JoinClanDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,9 +55,10 @@ public class ClanController {
 
     // join
     @PostMapping("/join/{clanId}")
-    public ResponseEntity<?> joinClan(@PathVariable Long clanId, Authentication authentication){
+    public ResponseEntity<JoinClanDTO> joinClan(@PathVariable Long clanId, Authentication authentication){
         User user= (User) authentication.getPrincipal();
-        ClanDTO clanDTO = ClanDTO.fromEntity(clanService.joinClan(clanId,user));
+        JoinClanDTO jcDTO = clanService.joinClan(clanId, user);
+        JoinClanDTO clanDTO = JoinClanDTO.fromEntity(clanService.getById(clanId), jcDTO.message());
         return ResponseEntity.ok(clanDTO);
     }
 
@@ -90,7 +90,7 @@ public class ClanController {
     public  ResponseEntity<String> setRole(
             @PathVariable Long clanId,
             @RequestParam Long targetUserId,
-            @RequestParam CLanRole newRole,
+            @RequestParam ClanRole newRole,
             Authentication authentication) {
 
         User currentUser = (User) authentication.getPrincipal();

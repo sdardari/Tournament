@@ -1,17 +1,13 @@
 package be.TFTIC.Tournoi.dl.entities;
 
-import be.TFTIC.Tournoi.dl.enums.CLanRole;
+import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,6 +21,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="user_id")
     private Long Id;
 
     @Column(nullable = false)
@@ -43,7 +40,6 @@ public class User implements UserDetails {
     private int ranking;
 
 
-
     @Setter
     @Column(nullable = false)
     private String password;
@@ -56,12 +52,8 @@ public class User implements UserDetails {
     @Setter
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private CLanRole cLanRole;
+    private ClanRole clanRole;
 
-    // Many-to-one relation with Clan
-    @ManyToOne
-    @JoinColumn(name = "clan_id")
-    private Clan clan;
 
     public User(String username, String firstname, String lastname, String email, String password) {
         this.username = username;
