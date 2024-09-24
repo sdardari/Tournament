@@ -9,10 +9,7 @@ import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.il.utils.JwtUtils;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
-import be.TFTIC.Tournoi.pl.models.clan.CLanForm;
-import be.TFTIC.Tournoi.pl.models.clan.CLanFormCreate;
-import be.TFTIC.Tournoi.pl.models.clan.ClanDTO;
-import be.TFTIC.Tournoi.pl.models.clan.JoinClanDTO;
+import be.TFTIC.Tournoi.pl.models.clan.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +29,9 @@ public class ClanController {
     private final JwtUtils jwtUtils;
 
     @PostMapping("/create")
-    public ResponseEntity<ClanDTO> createClan(@Valid @RequestBody CLanFormCreate cLanFormCreate, Authentication authentication){
+    public ResponseEntity<ClanDTO> createClan(@Valid @RequestBody ClanFormCreate clanFormCreate, Authentication authentication){
         User user = (User) authentication.getPrincipal();
-        ClanDTO clanDTO = clanService.createClan(cLanFormCreate, user.getId());
+        ClanDTO clanDTO = clanService.createClan(clanFormCreate, user.getId());
       //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return  ResponseEntity.ok(clanDTO);
     }
@@ -62,29 +59,31 @@ public class ClanController {
         return ResponseEntity.ok(clanDTO);
     }
 
-    // Leave Clan
-    @PostMapping("/leave/{clanId}")
-    public ResponseEntity<?> leaveClan(@PathVariable Long clanId, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        clanService.leaveClan(clanId, user);
-        return ResponseEntity.ok("User left the clan");
-    }
-
     //update
-    @PutMapping("/{clanId}")
-    public ResponseEntity<ClanDTO> updateClan(@PathVariable Long clnaId, @RequestBody CLanForm cLanForm, Authentication authentication){
+    @PutMapping("/edit/{clanId}")
+    public ResponseEntity<ClanDTO> updateClan(@PathVariable Long clanId, @RequestBody ClanFormEdit clanFormEdit, Authentication authentication){
         User user= (User) authentication.getPrincipal();
-        ClanDTO clanDTO= clanService.updateClan(clnaId,cLanForm);
+        ClanDTO clanDTO= clanService.updateClan(user,clanId,clanFormEdit);
         return ResponseEntity.ok(clanDTO);
     }
 
     //delete
-    @DeleteMapping("/{clanId}")
+    @DeleteMapping("delete/{clanId}")
     public ResponseEntity<String> deleteClan(@PathVariable Long clanId, Authentication authentication){
         User user= (User) authentication.getPrincipal();
         clanService.deleteClan(clanId,user);
         return ResponseEntity.ok("Clan deleted succesfully");
     }
+
+    // Leave Clan
+    @PostMapping("/leave/{clanId}")
+    public ResponseEntity<String> leaveClan(@PathVariable Long clanId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        Long userId= user.getId();
+        clanService.leaveClan(clanId, userId);
+        return ResponseEntity.ok("User left the clan");
+    }
+
 
     @PostMapping("/{clanId}/role")
     public  ResponseEntity<String> setRole(

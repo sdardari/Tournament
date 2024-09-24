@@ -20,7 +20,7 @@ public class JwtUtils {
 
     private final byte[] secret= "1234oooooooooooooooooooooooooooooooooiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiooooooo".getBytes(StandardCharsets.UTF_8);
     private final SecretKey secretKey= new SecretKeySpec(secret,"HmacSHA256");
-    private final int expireAt=86400;
+    private final int expireAt=8640000;
     //le token est valable qu'un seul jour
 
     public JwtUtils(){

@@ -49,10 +49,7 @@ public class User implements UserDetails {
     @Column(nullable = false,length = 20)
     private UserRole role;
 
-    @Setter
-    @Enumerated(EnumType.STRING)
-    @Column(length = 20)
-    private ClanRole clanRole;
+
 
 
     public User(String username, String firstname, String lastname, String email, String password) {

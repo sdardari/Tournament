@@ -2,8 +2,7 @@ package be.TFTIC.Tournoi.pl.models.clan;
 
 
 import be.TFTIC.Tournoi.dl.entities.Clan;
-import be.TFTIC.Tournoi.dl.entities.User;
-import jakarta.validation.constraints.Email;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 @Data@NoArgsConstructor
 @AllArgsConstructor
-public class CLanForm {
+public class ClanForm {
 
     @NotBlank
     @Size(max= 20)

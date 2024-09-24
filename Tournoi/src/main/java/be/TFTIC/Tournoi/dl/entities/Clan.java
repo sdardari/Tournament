@@ -14,6 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter@Setter
+@EqualsAndHashCode
 public class Clan {
 
     @Id

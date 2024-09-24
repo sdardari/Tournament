@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Data@NoArgsConstructor
 @AllArgsConstructor
-public class CLanFormCreate {
+public class ClanFormCreate {
 
     @NotBlank
     @Size(max= 20)

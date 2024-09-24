@@ -1,6 +1,7 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
 import be.TFTIC.Tournoi.bll.services.ClanService;
+import be.TFTIC.Tournoi.bll.services.JoinRequestService;
 import be.TFTIC.Tournoi.dal.repositories.ClanRepository;
 import be.TFTIC.Tournoi.dal.repositories.JoinRequestRepository;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
@@ -11,15 +12,13 @@ import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.dl.enums.RequestStatus;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
-import be.TFTIC.Tournoi.pl.models.clan.CLanForm;
-import be.TFTIC.Tournoi.pl.models.clan.CLanFormCreate;
-import be.TFTIC.Tournoi.pl.models.clan.ClanDTO;
-import be.TFTIC.Tournoi.pl.models.clan.JoinClanDTO;
+import be.TFTIC.Tournoi.pl.models.clan.*;
 import lombok.AllArgsConstructor;
 import org.hibernate.mapping.Join;
 import org.springframework.stereotype.Service;
 import be.TFTIC.Tournoi.il.utils.JwtUtils;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -30,10 +29,12 @@ public class ClanServiceImpl implements ClanService{
     private final ClanRepository clanRepository;
     private final UserRepository userRepository;
     private final JoinRequestRepository joinRequestRepository;
+    private final JoinRequestService joinRequestService;
     private final JwtUtils jwtUtils;
 
+
     @Override
-    public ClanDTO createClan(CLanFormCreate cLanFormCreate, Long userId) {
+    public ClanDTO createClan(ClanFormCreate cLanFormCreate, Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new RuntimeException("User not found"));
 
@@ -69,8 +70,12 @@ public class ClanServiceImpl implements ClanService{
     @Override
     public JoinClanDTO joinClan(Long clanId, User user) {
         Clan clan = getById(clanId);
+        Long userId= user.getId();
 
-        if (clan.getMembers().contains(user)) {
+        boolean userAlreadyMemberOfClan= clan.getMembers().stream()
+                .anyMatch(member-> member.getId().equals(userId));
+
+        if (userAlreadyMemberOfClan) {
             return JoinClanDTO.fromEntity(clan, "You are already a member of this clan !");
         }
 
@@ -104,51 +109,68 @@ public class ClanServiceImpl implements ClanService{
     }
 
     @Override
-    public ClanDTO updateClan(Long clanId, CLanForm cLanForm) {
+    public ClanDTO updateClan(User user,Long clanId, ClanFormEdit clanFormEdit) {
         Clan clan= clanRepository.findById(clanId)
                 .orElseThrow(()->new RuntimeException("Clan not found"));
-        User user= userRepository.findById(cLanForm.getPresidentId())
-                .orElseThrow(()->new RuntimeException("User not found"));
 
-        ClanRole userRole= clan.getRoles().get(user);
-        if(userRole!= ClanRole.PRESIDENT&& userRole != ClanRole.VICE_PRESIDENT){
-            throw new RuntimeException("Only the President or Vice Presidetn can update the clan ");
+        Long userId= user.getId();
+        ClanRole userRole= clan.getRoles().get(userId);
+        if(userRole!= ClanRole.PRESIDENT&& userRole != ClanRole.VICE_PRESIDENT ){
+            throw new RuntimeException("Only the President or Vice President of the clan itself can update the clan ");
         }
-        clan.setName(cLanForm.getName());
-        clan.setPrivate(cLanForm.isPrivate());
-        clan.setMinimumTrophies(cLanForm.getMinimumTrophies());
+        clan.setName(clanFormEdit.getName());
+        clan.setPrivate(clanFormEdit.isPrivate());
+        clan.setMinimumTrophies(clanFormEdit.getMinimumTrophies());
 
         clan=clanRepository.save(clan);
         return ClanDTO.fromEntity(clan);
     }
 
     @Override
-    public void deleteClan(Long id, User user ) {
-        Clan clan =clanRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Clan not found"));
-        userRepository.findById(user.getId())
-                .orElseThrow(()->new RuntimeException("User not found"));
+    public void deleteClan(Long clanId, User user) {
+        Clan clan = clanRepository.findById(clanId)
+                .orElseThrow(() -> new RuntimeException("Clan not found"));
+        //TODO pourquoi le user avec id president ne peut pas supprimer le clan ???
 
-        if(user.getRole()!= UserRole.ADMIN){
-            throw new RuntimeException("Only Admin can delete the clan.");
+         Map<Long, ClanRole> roles = clan.getRoles();
+         ClanRole userRole = roles.get(user.getId());
+
+        if (user.getRole() != UserRole.ADMIN  && userRole != ClanRole.PRESIDENT) {
+            throw new RuntimeException("Only Admin or President can delete the clan." + userRole + " " + user.getRole());
         }
+        joinRequestService.deleteRequestByClan(clan);
         clanRepository.delete(clan);
-
     }
 
     @Override
-    public void leaveClan(Long clanId, User user) {
+    public void leaveClan(Long clanId, Long userId) {
         Clan clan = clanRepository.findById(clanId)
-                .orElseThrow(()->new RuntimeException("User not found"));
-        if(clan.getMembers().contains(user)){
-            clan.getMembers().remove(user);
-            clan.getRoles().remove(user);
+                .orElseThrow(() -> new RuntimeException("Clan not found"));
+        
+        boolean isMember = clan.getMembers().stream()
+                .anyMatch(member -> member.getId().equals(userId));
+
+        if (isMember) {
+            if (clan.getRoles().get(userId) == ClanRole.PRESIDENT) {
+                Long newPresidentId = clan.getRoles().entrySet().stream()
+                        .filter(entry -> entry.getValue() == ClanRole.VICE_PRESIDENT)
+                        .map(Map.Entry::getKey)
+                        .findFirst()
+                        .orElse(null);
+                
+                if (newPresidentId != null) {
+                    clan.getRoles().put(newPresidentId, ClanRole.PRESIDENT);
+                } else {
+                    throw new RuntimeException("Promote first a president or vice-president to leave a clan.");
+                }
+            }
+            clan.getMembers().removeIf(member -> member.getId().equals(userId));
+            clan.getRoles().remove(userId);
             clanRepository.save(clan);
-        }else{
+
+        } else {
             throw new RuntimeException("User is not a member of this clan");
         }
-
-
     }
 
     @Override
@@ -156,37 +178,24 @@ public class ClanServiceImpl implements ClanService{
         Clan clan = clanRepository.findById(clanId)
                 .orElseThrow(() -> new RuntimeException("Clan not found"));
 
-// Get the current user's role in the clan
         ClanRole currentUserRole = clan.getRoles().get(currentUser.getId());
-
-        // Ensure the current user is a member of the clan and has a role
         if (currentUserRole == null) {
             throw new RuntimeException("You are not a member of this clan.");
         }
-
-        // Ensure that only the President or Vice President can set roles
         if (currentUserRole != ClanRole.PRESIDENT && currentUserRole != ClanRole.VICE_PRESIDENT) {
             throw new RuntimeException("Only the President or Vice President can set member roles.");
         }
-
-        // Vice Presidents can only assign roles up to "Elder"
         if (currentUserRole == ClanRole.VICE_PRESIDENT && newRole.ordinal() >= ClanRole.VICE_PRESIDENT.ordinal()) {
             throw new RuntimeException("Vice President can only set roles up to Elder.");
         }
-
-        // Role assignment logic
         if (currentUserRole == ClanRole.PRESIDENT && newRole == ClanRole.PRESIDENT) {
-            // If the current President is assigning the President role to someone else,
-            // they will become a Vice President
             clan.getRoles().put(currentUser.getId(), ClanRole.VICE_PRESIDENT);
         }
 
         User targetUser= userRepository.findById(targetUserDTO.getId())
                 .orElseThrow(()->new RuntimeException("user not found"));
-        // Update the role of the target user
-        clan.getRoles().put(targetUser.getId(), newRole);
 
-        // Save the updated clan entity to the repository
+        clan.getRoles().put(targetUser.getId(), newRole);
         clanRepository.save(clan);
     }
     @Override

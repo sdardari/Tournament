@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface JoinRequestRepository extends JpaRepository<JoinRequest, Long> {
 
     Optional<JoinRequest> findByUserAndClanAndStatus(User user, Clan clan, RequestStatus status);
+
+    void deleteByClan(Clan clan);
 }
