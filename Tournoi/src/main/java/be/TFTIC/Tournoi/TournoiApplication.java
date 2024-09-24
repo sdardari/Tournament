@@ -1,6 +1,5 @@
 package be.TFTIC.Tournoi;
 
-import be.TFTIC.Tournoi.bll.utils.UserUtils;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;

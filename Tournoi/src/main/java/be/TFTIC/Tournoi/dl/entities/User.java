@@ -1,8 +1,8 @@
 package be.TFTIC.Tournoi.dl.entities;
 
 import be.TFTIC.Tournoi.dl.enums.UserRole;
-import lombok.*;
 import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -40,8 +40,8 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Include
     private String email;
 
-    @Column
-    private Integer ranking;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Ranking ranking;
 
     @Setter
     @Column(nullable = false)
@@ -55,6 +55,7 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "clan_id")
     private Clan clan;
+
 
     public User(String username, String firstname, String lastname, String email, String password) {
         this.username = username;

@@ -18,4 +18,8 @@ public class Clan {
     @Column(nullable = false)
     private String nomClan;
 
+    @OneToOne
+    @JoinColumn(name = "ranking_id")
+    private Ranking ranking;
+
 }
