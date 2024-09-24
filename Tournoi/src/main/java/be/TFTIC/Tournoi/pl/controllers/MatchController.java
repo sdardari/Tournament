@@ -1,7 +1,9 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
 import be.TFTIC.Tournoi.bll.services.MatchService;
+import be.TFTIC.Tournoi.bll.services.PlaceService;
 import be.TFTIC.Tournoi.dl.entities.Match;
+import be.TFTIC.Tournoi.dl.entities.Place;
 import be.TFTIC.Tournoi.pl.models.matchDTO.MatchDetailDTO;
 import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.List;
 public class MatchController {
 
     private final MatchService matchService;
+    private final PlaceService placeService;
 
     @GetMapping
     public ResponseEntity<List<MatchDetailDTO>> getAllMatches() {
@@ -35,11 +38,14 @@ public class MatchController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<MatchDetailDTO> createMatch(@RequestBody @Validated MatchForm matchForm) {
-        Match newMatch = matchForm.toEntity();
-        Match createdMatch = matchService.createMatch(newMatch);
-        MatchDetailDTO matchDetailDTO = MatchDetailDTO.fromMatch(createdMatch);
-        return ResponseEntity.ok(matchDetailDTO);
+    public ResponseEntity<MatchDetailDTO> createMatch(
+            @RequestBody @Validated MatchForm matchForm,
+            @RequestParam(required = false) String team1,
+            @RequestParam(required = false) String team2
+    ) {
+
+        Match createdMatch = matchService.createMatch(matchForm, team1, team2);
+        return ResponseEntity.ok(MatchDetailDTO.fromMatch(createdMatch));
     }
 
     @PutMapping("/{id}")
