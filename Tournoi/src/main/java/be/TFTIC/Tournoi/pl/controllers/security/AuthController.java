@@ -31,15 +31,12 @@ public class AuthController {
         return ResponseEntity.ok(mapUserToken(u));
     }
 
+    // a changer le ? en voir project
     @PostMapping("/login")
     @PreAuthorize("isAnonymous()")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginForm form) {
-        try {
+    public ResponseEntity<UserTokenDTO> login(@Valid @RequestBody UserLoginForm form) {
             User u = authService.login(form.username(), form.password());
             return ResponseEntity.ok(mapUserToken(u));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorDTO("Invalid credentials"));
-        }
     }
 
     private UserTokenDTO mapUserToken(User u) {
