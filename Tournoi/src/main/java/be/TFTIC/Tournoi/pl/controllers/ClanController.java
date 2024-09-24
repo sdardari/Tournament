@@ -106,16 +106,10 @@ public class ClanController {
             @RequestParam boolean accept,
             Authentication authentication) {
 
-        // Get the current authenticated user from the security context
         User currentUser = (User) authentication.getPrincipal();
-
-        // Fetch the user making the join request
         UserDTO user = userService.getUserById(userId);
+        clanService.handleJoinRequest(clanId, userId, currentUser, accept);
 
-        // Handle the join request using the service method
-        clanService.handleJoinRequest(clanId, currentUser, accept);
-
-        // Return appropriate response based on the result
         if (accept) {
             return ResponseEntity.ok("Join request accepted. User has been added to the clan.");
         } else {

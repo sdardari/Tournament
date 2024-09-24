@@ -20,6 +20,6 @@ public interface ClanService {
     void deleteClan(Long id, User user);
     void leaveClan(Long clanId, Long userId);
     void setRole(Long clanId, UserDTO user, ClanRole role, User currentUser);
-    void handleJoinRequest(Long clanId, User user, boolean accept);
+    void handleJoinRequest(Long clanId, Long userId, User user, boolean accept);
 
 }

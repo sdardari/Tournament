@@ -198,30 +198,32 @@ public class ClanServiceImpl implements ClanService{
         clan.getRoles().put(targetUser.getId(), newRole);
         clanRepository.save(clan);
     }
+
+
     @Override
-    public void handleJoinRequest(Long clanId, User user, boolean accept) {
-        // Fetch the clan from the repository
+    public void handleJoinRequest(Long clanId, Long userIdToChange, User currentUser, boolean accept) {
         Clan clan = clanRepository.findById(clanId)
                 .orElseThrow(() -> new RuntimeException("Clan not found"));
 
-        ClanRole currentUserRole = clan.getRoles().get(user.getId());
-
-        // Check if the user making the request is a member of the clan and has the right role
+        ClanRole currentUserRole = clan.getRoles().get(currentUser.getId());
         if (currentUserRole == null ||
                 !(currentUserRole == ClanRole.PRESIDENT || currentUserRole == ClanRole.VICE_PRESIDENT)) {
             throw new RuntimeException("Only Presidents or Vice Presidents can handle join requests.");
         }
+        User userToChange= userRepository.findById(userIdToChange)
+                .orElseThrow(()-> new RuntimeException("User not found"));
 
-        // Handle join request (accept or reject)
+        JoinRequest joinRequest= joinRequestRepository.findByUserAndClanAndStatus(userToChange,clan,RequestStatus.PENDING)
+                .orElseThrow(()-> new RuntimeException("Join request not found "));
+
         if (accept) {
-            // Add user to the clan with default role as MEMBER
-            clan.getRoles().put(user.getId(), ClanRole.MEMBER);
-            userRepository.save(user); // Save user with updated clan association
+            clan.getRoles().put(userToChange.getId(), ClanRole.MEMBER);
+            userRepository.save(userToChange);
+            joinRequest.setStatus(RequestStatus.APPROVED);
         } else {
+            joinRequest.setStatus(RequestStatus.REJECTED);
             throw new RuntimeException("Join request has been rejected.");
         }
-
-        // Save the updated clan entity to the repository
         clanRepository.save(clan);
     }
 }
