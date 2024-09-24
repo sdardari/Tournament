@@ -15,15 +15,14 @@ public class TeamServiceImpl implements TeamService {
     private final TeamRepository teamRepository;
 
     @Override
-    public Team getTeamById(Long id) {
+    public Team getTeamById(String id) {
         return teamRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Team with id " + id + " not found"));
     }
 
     @Override
     public List<Team> getAllTeams() {
-        List<Team> teams = teamRepository.findAll();
-        return teams;
+        return teamRepository.findAll();
     }
 
     @Override

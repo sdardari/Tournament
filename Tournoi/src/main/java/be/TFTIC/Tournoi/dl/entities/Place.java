@@ -2,11 +2,9 @@ package be.TFTIC.Tournoi.dl.entities;
 
 import lombok.*;
 import jakarta.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
-@Table(name = "place")
+@Getter@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Place {
@@ -15,12 +13,15 @@ public class Place {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @Column(nullable = false)
-    private String name;
+    @Column
+    private String nameClub;
 
-    @Column(nullable = false)
-    private String localisation;
+    @OneToOne
+    private Address address;
 
-
+    public Place(String nameClub, Address address) {
+        this.nameClub = nameClub;
+        this.address = address;
+    }
 
 }
