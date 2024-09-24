@@ -25,8 +25,6 @@ public class MatchForm {
     public Match toEntity() {
 
         Match match = new Match();
-        match.setTeam1Players(this.teamId1);
-        match.setTeam2Players(this.teamId2);
         match.setScoreTeam1Set1(this.scoreTeam1Set1);
         match.setScoreTeam2Set1(this.scoreTeam2Set1);
         match.setScoreTeam1Set2(this.scoreTeam1Set2);

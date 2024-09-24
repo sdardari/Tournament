@@ -38,10 +38,14 @@ public class MatchController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<MatchDetailDTO> createMatch(@RequestBody @Validated MatchForm matchForm) {
-        Match match = matchForm.toEntity();
-        match.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
-        return ResponseEntity.ok(MatchDetailDTO.fromMatch(matchService.createMatch(match)));
+    public ResponseEntity<MatchDetailDTO> createMatch(
+            @RequestBody @Validated MatchForm matchForm,
+            @RequestParam(required = false) String team1,
+            @RequestParam(required = false) String team2
+    ) {
+
+        Match createdMatch = matchService.createMatch(matchForm, team1, team2);
+        return ResponseEntity.ok(MatchDetailDTO.fromMatch(createdMatch));
     }
 
     @PutMapping("/{id}")

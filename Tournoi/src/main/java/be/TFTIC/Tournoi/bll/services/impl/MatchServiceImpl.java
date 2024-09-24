@@ -11,7 +11,6 @@ import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,14 +32,21 @@ public class MatchServiceImpl implements MatchService {
                 .orElseThrow(() -> new RuntimeException("Le post avec cette id:" + id + "n'existe pas"));
     }
 
-    public Match createMatch(Match match) {
+    @Override
+    public Match createMatch(MatchForm matchForm, String team1, String team2) {
+        Match match = matchForm.toEntity();
+        match.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
+
+        match.setTeam1Players(team1);
+        match.setTeam2Players(team2);
+
         return matchRepository.save(match);
     }
 
     @Override
     public void update(Long id, MatchForm matchForm) {
         Match oldMatch = getById(id);
-        List<User> users = userService.fromStringToUser(matchForm);
+        List<User> users = userService.fromStringToUser(matchForm.toEntity());
 
         oldMatch.setTeam1Players(matchForm.getTeamId1());
         oldMatch.setTeam2Players(matchForm.getTeamId2());
@@ -63,6 +69,7 @@ public class MatchServiceImpl implements MatchService {
 
     @Override
     public String determineMatchWinner(Match match) {
+        //TO DO : renvoyer ID Winner
         int team1Wins = 0;
         int team2Wins = 0;
 

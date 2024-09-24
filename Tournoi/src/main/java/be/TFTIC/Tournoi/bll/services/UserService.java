@@ -1,6 +1,7 @@
 package be.TFTIC.Tournoi.bll.services;
 
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
+import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
@@ -22,7 +23,7 @@ public interface UserService {
     List<UserDTO> findByCriteria(UserForm form);
 
 
-    List<User> fromStringToUser(MatchForm matchForm);
+    List<User> fromStringToUser(Match match);
 
 
 

@@ -3,6 +3,7 @@ package be.TFTIC.Tournoi.bll.services.impl;
 import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.bll.specifications.UserSpecification;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
+import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
@@ -22,7 +23,6 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final DataSourceTransactionManagerAutoConfiguration dataSourceTransactionManagerAutoConfiguration;
 
     //region CRUD
 
@@ -100,13 +100,13 @@ public class UserServiceImpl implements UserService {
     //endregion
 
     //region UTILS
-    public List<User> fromStringToUser(MatchForm matchForm) {
+    public List<User> fromStringToUser(Match match) {
         //TODO FAIRE LA GESTION DES CHAINES DE CARACTERES
         List<User> users = new ArrayList<>();
 
-        for (int i = 0; i < getSize(matchForm.getTeamId1()); i++) {
-            users.add(addUserFromMatchForm(matchForm.getTeamId1(),i));
-            users.add(addUserFromMatchForm(matchForm.getTeamId2(),i));
+        for (int i = 0; i < getSize(match.getTeam1Players()); i++) {
+            users.add(addUserFromMatchForm(match.getTeam1Players(),i));
+            users.add(addUserFromMatchForm(match.getTeam2Players(),i));
         }
         return users;
     }
