@@ -16,4 +16,5 @@ public interface TournamentService {
     void tournamentFinish (Long id);
     void inscription (Long id);
     List<Team> getParticipant(Long id);
+
 }

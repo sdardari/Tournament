@@ -10,8 +10,8 @@ public interface MatchService {
     // region CRUD Match
     List<Match> getAll();
     Match getById(Long id);
-    Match createMatch(MatchForm matchForm, String team1, String team2);
-    void update(Long id, MatchForm matchForm);
+//    Match createMatch(MatchForm matchForm);
+//    void update(Long id, MatchForm matchForm);
     void delete(Long id);
     // endregion
 
@@ -20,5 +20,6 @@ public interface MatchService {
     String determinerSetWinner(int scoreTeam1, int scoreTeam2);
 
     // endregion
+    Match save(Match match);
 
 }

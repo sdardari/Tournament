@@ -36,25 +36,25 @@ public class MatchController {
         MatchDetailDTO matchDetailDTO = MatchDetailDTO.fromMatch(match);
         return ResponseEntity.ok(matchDetailDTO);
     }
-
-    @PostMapping("/create")
-    public ResponseEntity<MatchDetailDTO> createMatch(
-            @RequestBody @Validated MatchForm matchForm,
-            @RequestParam(required = false) String team1,
-            @RequestParam(required = false) String team2
-    ) {
-
-        Match createdMatch = matchService.createMatch(matchForm, team1, team2);
-        return ResponseEntity.ok(MatchDetailDTO.fromMatch(createdMatch));
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<MatchDetailDTO> updateMatch(@PathVariable Long id, @RequestBody @Validated MatchForm matchForm) {
-        matchService.update(id, matchForm);
-        Match updatedMatch = matchService.getById(id);
-        MatchDetailDTO matchDetailDTO = MatchDetailDTO.fromMatch(updatedMatch);
-        return ResponseEntity.ok(matchDetailDTO);
-    }
+//
+//    @PostMapping("/create")
+//    public ResponseEntity<MatchDetailDTO> createMatch(
+//            @RequestBody @Validated MatchForm matchForm,
+//            @RequestParam(required = false) String team1,
+//            @RequestParam(required = false) String team2
+//    ) {
+//
+//        Match createdMatch = matchService.createMatch(matchForm, team1, team2);
+//        return ResponseEntity.ok(MatchDetailDTO.fromMatch(createdMatch));
+//    }
+//
+//    @PutMapping("/{id}")
+//    public ResponseEntity<MatchDetailDTO> updateMatch(@PathVariable Long id, @RequestBody @Validated MatchForm matchForm) {
+//        matchService.update(id, matchForm);
+//        Match updatedMatch = matchService.getById(id);
+//        MatchDetailDTO matchDetailDTO = MatchDetailDTO.fromMatch(updatedMatch);
+//        return ResponseEntity.ok(matchDetailDTO);
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMatch(@PathVariable Long id) {

@@ -1,16 +1,24 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.services.MatchService;
 import be.TFTIC.Tournoi.bll.services.TournamentService;
+import be.TFTIC.Tournoi.bll.services.UserService;
+import be.TFTIC.Tournoi.dal.repositories.MatchRepository;
 import be.TFTIC.Tournoi.dal.repositories.TeamRepository;
 import be.TFTIC.Tournoi.dal.repositories.TournamentRepository;
+import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.Team;
 import be.TFTIC.Tournoi.dl.entities.Tournament;
 import be.TFTIC.Tournoi.dl.entities.User;
+import be.TFTIC.Tournoi.pl.models.matchDTO.CreateMatchForm;
+import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +29,7 @@ public class TournamentServiceImpl implements TournamentService {
 
     private final TournamentRepository tournamentRepository;
     private final TeamRepository teamRepository;
+    private final MatchService matchService;
 
     @Override
     public List<Tournament> getAll() {
@@ -32,12 +41,11 @@ public class TournamentServiceImpl implements TournamentService {
         return tournamentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("The tournament with id " + id + " not found"));
     }
-// TODO DELETE 
+
     @Override
     public Long create(Tournament tournament) {
         tournament.setDateDebut(LocalDateTime.now());
         Tournament savetournament = tournamentRepository.save(tournament);
-        //TODO REFAC tournamentParticipantMap.put(tournament.getTournamentId(), new ArrayList<>());
         return savetournament.getTournamentId();
     }
 
@@ -75,9 +83,9 @@ public class TournamentServiceImpl implements TournamentService {
             userTeam = existingTeam;
         } else {
             userTeam = new Team();
-            userTeam.setTeamId(user.getUsername().substring(0,2).toUpperCase()+ user.getId());
-            userTeam.setName(user.getUsername() + "'s team");
-            userTeam.setUsers(Collections.singletonList(user));
+            userTeam.setTeamId(Long.toString(user.getId()));
+            userTeam.setName(user.getUsername().substring(0,2).toUpperCase()+ user.getId());
+            //userTeam.setUsers(Collections.singletonList(user));
             teamRepository.save(userTeam);
         }
 
@@ -91,6 +99,9 @@ public class TournamentServiceImpl implements TournamentService {
         }
 
         participants.add(userTeam);
+        if(participants.size() == tournament.getNbPlace()){
+            startTournament(participants);
+        }
         tournamentRepository.save(tournament);
     }
 
@@ -99,5 +110,27 @@ public class TournamentServiceImpl implements TournamentService {
         Tournament tournament = tournamentRepository.findTeamByTournament(tournamentId)
                 .orElseThrow(() -> new RuntimeException("Tournament not found"));
         return tournament.getParticipant();
+    }
+
+    public List<Team> createTeam(List<Team> users){
+        List<Team> teams = new ArrayList<>();
+
+        for (int i = 0; i < users.size(); i += 2) {
+            Team team = new Team();
+            team.setTeamId(users.get(i).getTeamId() + "_" + users.get(i+1).getTeamId());
+            team.setName(users.get(i).getName() + "_" + users.get(i+1).getName());
+
+            teams.add(team);
+        }
+        return teams;
+    }
+
+    public void startTournament(List<Team> participant){
+        List<Team> teams = createTeam(participant);
+
+        for (int i = 0; i < teams.size(); i += 2) {
+            Match match = CreateMatchForm.toEntity(teams.get(i), teams.get(i+1));
+            matchService.save(match);
+        }
     }
 }

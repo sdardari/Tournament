@@ -32,34 +32,34 @@ public class MatchServiceImpl implements MatchService {
                 .orElseThrow(() -> new RuntimeException("Le post avec cette id:" + id + "n'existe pas"));
     }
 
-    @Override
-    public Match createMatch(MatchForm matchForm, String team1, String team2) {
-        Match match = matchForm.toEntity();
-        match.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
+//    @Override
+//    public Match createMatch(MatchForm matchForm, String team1, String team2) {
+//        Match match = matchForm.toEntity();
+//        match.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
+//
+//        match.setTeam1Players(team1);
+//        match.setTeam2Players(team2);
+//
+//        return matchRepository.save(match);
+//    }
 
-        match.setTeam1Players(team1);
-        match.setTeam2Players(team2);
-
-        return matchRepository.save(match);
-    }
-
-    @Override
-    public void update(Long id, MatchForm matchForm) {
-        Match oldMatch = getById(id);
-        List<User> users = userService.fromStringToUser(matchForm.toEntity());
-
-        oldMatch.setTeam1Players(matchForm.getTeamId1());
-        oldMatch.setTeam2Players(matchForm.getTeamId2());
-        oldMatch.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
-        oldMatch.setScoreTeam1Set1(matchForm.getScoreTeam1Set1());
-        oldMatch.setScoreTeam2Set1(matchForm.getScoreTeam2Set1());
-        oldMatch.setScoreTeam1Set2(matchForm.getScoreTeam2Set2());
-        oldMatch.setScoreTeam2Set2(matchForm.getScoreTeam2Set2());
-        oldMatch.setScoreTeam1Set3(matchForm.getScoreTeam1Set3());
-        oldMatch.setScoreTeam2Set3(matchForm.getScoreTeam2Set3());
-
-        matchRepository.save(oldMatch);
-    }
+//    @Override
+//    public void update(Long id, MatchForm matchForm) {
+//        Match oldMatch = getById(id);
+//        List<User> users = userService.fromStringToUser(matchForm.toEntity());
+//
+//        oldMatch.setTeam1Players(matchForm.getTeamId1());
+//        oldMatch.setTeam2Players(matchForm.getTeamId2());
+//        oldMatch.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
+//        oldMatch.setScoreTeam1Set1(matchForm.getScoreTeam1Set1());
+//        oldMatch.setScoreTeam2Set1(matchForm.getScoreTeam2Set1());
+//        oldMatch.setScoreTeam1Set2(matchForm.getScoreTeam2Set2());
+//        oldMatch.setScoreTeam2Set2(matchForm.getScoreTeam2Set2());
+//        oldMatch.setScoreTeam1Set3(matchForm.getScoreTeam1Set3());
+//        oldMatch.setScoreTeam2Set3(matchForm.getScoreTeam2Set3());
+//
+//        matchRepository.save(oldMatch);
+//    }
 
     @Override
     public void delete(Long id) {
@@ -86,4 +86,8 @@ public class MatchServiceImpl implements MatchService {
         return scoreTeam1 > scoreTeam2 ? "Team 1" : "Team 2";
     }
 
+    @Override
+    public Match save(Match match){
+        return matchRepository.save(match);
+    }
 }
