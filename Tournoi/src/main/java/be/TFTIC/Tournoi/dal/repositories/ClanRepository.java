@@ -1,4 +1,7 @@
 package be.TFTIC.Tournoi.dal.repositories;
 
-public interface ClanRepository {
+import be.TFTIC.Tournoi.dl.entities.Clan;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ClanRepository extends JpaRepository<Clan,Long> {
 }

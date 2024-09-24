@@ -24,14 +24,14 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initUsers(UserRepository userRepository) {
         return args -> {
-            if (userRepository.count() == 0) { // Pour éviter les entrées en double
-                userRepository.save(new User(null, "adminUser", "Admin", "User", "admin@example.com", null, passwordEncoder.encode("admin123"), UserRole.ADMIN, null));
-                userRepository.save(new User(null, "johnDoe", "John", "Doe", "john.doe@example.com", null, passwordEncoder.encode("password1"), UserRole.USER, null));
-                userRepository.save(new User(null, "janeDoe", "Jane", "Doe", "jane.doe@example.com", null, passwordEncoder.encode("password2"), UserRole.USER, null));
-                userRepository.save(new User(null, "samSmith", "Sam", "Smith", "sam.smith@example.com", null, passwordEncoder.encode("password3"), UserRole.USER, null));
-                userRepository.save(new User(null, "lisaJones", "Lisa", "Jones", "lisa.jones@example.com", null, passwordEncoder.encode("password4"), UserRole.USER, null));
-                userRepository.save(new User(null, "mikeBrown", "Mike", "Brown", "mike.brown@example.com", null, passwordEncoder.encode("password5"), UserRole.USER, null));
-                userRepository.save(new User(null, "lucyDavis", "Lucy", "Davis", "lucy.davis@example.com", null, passwordEncoder.encode("password6"), UserRole.USER, null));
+            if (userRepository.count() == 0) { // To avoid duplicate entries
+                userRepository.save(new User(null, "adminUser", "Admin", "User", "admin@example.com", 0, passwordEncoder.encode("admin123"), UserRole.ADMIN));
+                userRepository.save(new User(null, "johnDoe", "John", "Doe", "john.doe@example.com", 0, passwordEncoder.encode("password1"), UserRole.USER));
+                userRepository.save(new User(null, "janeDoe", "Jane", "Doe", "jane.doe@example.com", 0, passwordEncoder.encode("password2"), UserRole.USER));
+                userRepository.save(new User(null, "samSmith", "Sam", "Smith", "sam.smith@example.com", 0, passwordEncoder.encode("password3"), UserRole.USER));
+                userRepository.save(new User(null, "lisaJones", "Lisa", "Jones", "lisa.jones@example.com", 0, passwordEncoder.encode("password4"), UserRole.USER));
+                userRepository.save(new User(null, "mikeBrown", "Mike", "Brown", "mike.brown@example.com", 0, passwordEncoder.encode("password5"), UserRole.USER));
+                userRepository.save(new User(null, "lucyDavis", "Lucy", "Davis", "lucy.davis@example.com", 0, passwordEncoder.encode("password6"), UserRole.USER));
             }
         };
     }
