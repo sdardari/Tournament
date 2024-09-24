@@ -13,7 +13,7 @@ public class Place {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
 
-    @Column(nullable = false)
+    @Column
     private String nameClub;
 
     @OneToOne
@@ -23,4 +23,5 @@ public class Place {
         this.nameClub = nameClub;
         this.address = address;
     }
+
 }

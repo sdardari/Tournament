@@ -17,10 +17,10 @@ public class Match {
     private Long Id;
 
 
-    @Column(name = "team_1_players", nullable = false)
+    @Column(name = "team_1_players")
     private String team1Players;
 
-    @Column(name = "team_2_players", nullable = false)
+    @Column(name = "team_2_players")
     private String team2Players;
 
     @Column(name = "name_team_1", nullable = true)
@@ -33,7 +33,7 @@ public class Match {
     private String nameClanTeam2;
 
     @ManyToOne
-    @JoinColumn(name = "LocationId", nullable = false)
+    @JoinColumn(name = "LocationId")
     private Place place;
 
     @ManyToOne
@@ -60,9 +60,5 @@ public class Match {
 
 
     public Match(String teamId1, String teamId2, Long placeId, Integer scoreTeam1Set1, Integer scoreTeam1Set2, Integer scoreTeam1Set3, Integer scoreTeam2Set1, Integer scoreTeam2Set2, Integer scoreTeam2Set3, LocalDate dateOfMatch) {
-    }
-
-
-    public void setPlace(Long aLong) {
     }
 }
