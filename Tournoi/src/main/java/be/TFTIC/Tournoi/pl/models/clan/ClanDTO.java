@@ -11,10 +11,11 @@ public record ClanDTO (
         boolean isPrivate,
         int minimumTrophies,
         String president,
-        Set<User> members
+        Set<User> members,
+        String message
         ){
 
-    public static ClanDTO fromEntity(Clan clan){
-        return new ClanDTO(clan.getClanId(),clan.getName(),clan.getIsPrivate(),clan.getMinimumTrophies(),clan.getPresident(),clan.getMembers());
+    public static ClanDTO fromEntity(Clan clan, String message){
+        return new ClanDTO(clan.getClanId(),clan.getName(),clan.getIsPrivate(),clan.getMinimumTrophies(),clan.getPresident(),clan.getMembers(),message);
     }
 }

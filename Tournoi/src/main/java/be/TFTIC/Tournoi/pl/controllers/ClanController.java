@@ -3,13 +3,12 @@ package be.TFTIC.Tournoi.pl.controllers;
 
 import be.TFTIC.Tournoi.bll.services.ClanService;
 import be.TFTIC.Tournoi.bll.services.UserService;
-import be.TFTIC.Tournoi.dl.entities.Clan;
-import be.TFTIC.Tournoi.dl.entities.JoinRequest;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.il.utils.JwtUtils;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.clan.*;
+import be.TFTIC.Tournoi.pl.models.message.MessageDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -69,24 +68,24 @@ public class ClanController {
 
     //delete
     @DeleteMapping("delete/{clanId}")
-    public ResponseEntity<String> deleteClan(@PathVariable Long clanId, Authentication authentication){
+    public ResponseEntity<MessageDTO> deleteClan(@PathVariable Long clanId, Authentication authentication){
         User user= (User) authentication.getPrincipal();
-        clanService.deleteClan(clanId,user);
-        return ResponseEntity.ok("Clan deleted succesfully");
+        MessageDTO message=clanService.deleteClan(clanId,user);
+        return ResponseEntity.ok(message);
     }
 
     // Leave Clan
     @PostMapping("/leave/{clanId}")
-    public ResponseEntity<String> leaveClan(@PathVariable Long clanId, Authentication authentication) {
+    public ResponseEntity<MessageDTO> leaveClan(@PathVariable Long clanId, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         Long userId= user.getId();
-        clanService.leaveClan(clanId, userId);
-        return ResponseEntity.ok("User left the clan");
+        MessageDTO messageDTO= clanService.leaveClan(clanId, userId);
+        return ResponseEntity.ok(messageDTO);
     }
 
 
     @PostMapping("/{clanId}/role")
-    public  ResponseEntity<String> setRole(
+    public  ResponseEntity<MessageDTO> setRole(
             @PathVariable Long clanId,
             @RequestParam Long targetUserId,
             @RequestParam ClanRole newRole,
@@ -94,13 +93,13 @@ public class ClanController {
 
         User currentUser = (User) authentication.getPrincipal();
         UserDTO targetUser = userService.getUserById(targetUserId);
-        clanService.setRole(clanId, targetUser, newRole, currentUser);
-        return ResponseEntity.ok("Role updated successfully");
+        MessageDTO messageDTO= clanService.setRole(clanId, targetUser, newRole, currentUser);
+        return ResponseEntity.ok(messageDTO);
     }
 
     // Handle Join Request
     @PostMapping("/{clanId}/join-request")
-    public ResponseEntity<String> handleJoinRequest(
+    public ResponseEntity<MessageDTO> handleJoinRequest(
             @PathVariable Long clanId,
             @RequestParam Long userId,
             @RequestParam boolean accept,
@@ -108,13 +107,8 @@ public class ClanController {
 
         User currentUser = (User) authentication.getPrincipal();
         UserDTO user = userService.getUserById(userId);
-        clanService.handleJoinRequest(clanId, userId, currentUser, accept);
-
-        if (accept) {
-            return ResponseEntity.ok("Join request accepted. User has been added to the clan.");
-        } else {
-            return ResponseEntity.ok("Join request rejected.");
-        }
+        MessageDTO messageDTO=clanService.handleJoinRequest(clanId, userId, currentUser, accept);
+        return ResponseEntity.ok(messageDTO);
     }
 
 
