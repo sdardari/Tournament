@@ -9,7 +9,7 @@ import be.TFTIC.Tournoi.dl.entities.JoinRequest;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.dl.enums.RequestStatus;
-import be.TFTIC.Tournoi.pl.models.clan.JoinClanDTO;
+import be.TFTIC.Tournoi.pl.models.clan.ClanDTO;
 import be.TFTIC.Tournoi.pl.models.message.MessageDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class JoinRequestImpl implements JoinRequestService {
 
     }
     @Override
-    public JoinClanDTO joinClan(Long clanId, User user) {
+    public ClanDTO joinClan(Long clanId, User user) {
         Clan clan = getById(clanId);
         Long userId= user.getId();
 
@@ -48,21 +48,21 @@ public class JoinRequestImpl implements JoinRequestService {
                 .anyMatch(member-> member.getId().equals(userId));
 
         if (userAlreadyMemberOfClan) {
-            return JoinClanDTO.fromEntity(clan, "You are already a member of this clan !");
+            return ClanDTO.fromEntity(clan, "You are already a member of this clan !");
         }
 
         Optional<JoinRequest> existingRequest = joinRequestRepository.findByUserAndClanAndStatus(user, clan, RequestStatus.PENDING);
         //TODO passer par une méthode implémenter dans un service plutôt que le repo
 
         if (existingRequest.isPresent()) {
-            return JoinClanDTO.fromEntity(clan, "You already have a pending join request for this clan.");
+            return ClanDTO.fromEntity(clan, "You already have a pending join request for this clan.");
         }
 
         if(!clan.getIsPrivate()&&user.getRanking()>= clan.getMinimumTrophies()){
             clan.getMembers().add(user);
             clan.getRoles().put(user.getId(), ClanRole.MEMBER);
             clanRepository.save(clan);
-            return JoinClanDTO.fromEntity(clan, "Welcome in " + clan.getName() + " !");
+            return ClanDTO.fromEntity(clan, "Welcome in " + clan.getName() + " !");
 
         }
 
@@ -72,11 +72,11 @@ public class JoinRequestImpl implements JoinRequestService {
             joinRequest.setUser(user);
             joinRequest.setStatus(RequestStatus.PENDING);
             joinRequestRepository.save(joinRequest);
-            return JoinClanDTO.fromEntity(clan, "Clan "+ clan.getName() +" is private, your request is pending ");
+            return ClanDTO.fromEntity(clan, "Clan "+ clan.getName() +" is private, your request is pending ");
         }
 
         else{
-            return JoinClanDTO.fromEntity(clan, "Cannot join this clan. Rank requirement not met ");
+            return ClanDTO.fromEntity(clan, "Cannot join this clan. Rank requirement not met ");
         }
     }
 

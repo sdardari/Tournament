@@ -55,12 +55,11 @@ public class ClanController {
 
     // join
     @PostMapping("/join/{clanId}")
-    public ResponseEntity<JoinClanDTO> joinClan(
+    public ResponseEntity<ClanDTO> joinClan(
             @PathVariable Long clanId,
             Authentication authentication){
         User user= (User) authentication.getPrincipal();
-        JoinClanDTO jcDTO = joinRequestService.joinClan(clanId, user);
-        JoinClanDTO clanDTO = JoinClanDTO.fromEntity(clanService.getById(clanId), jcDTO.message());
+        ClanDTO clanDTO = joinRequestService.joinClan(clanId, user);
         return ResponseEntity.ok(clanDTO);
     }
 
