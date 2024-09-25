@@ -2,6 +2,7 @@ package be.TFTIC.Tournoi.pl.controllers;
 
 
 import be.TFTIC.Tournoi.bll.services.ClanService;
+import be.TFTIC.Tournoi.bll.services.JoinRequestService;
 import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
@@ -25,10 +26,12 @@ public class ClanController {
 
     private final UserService userService;
     private final ClanService clanService;
-    private final JwtUtils jwtUtils;
+    private final JoinRequestService joinRequestService;
 
     @PostMapping("/create")
-    public ResponseEntity<ClanDTO> createClan(@Valid @RequestBody ClanFormCreate clanFormCreate, Authentication authentication){
+    public ResponseEntity<ClanDTO> createClan(
+            @Valid @RequestBody ClanFormCreate clanFormCreate,
+            Authentication authentication){
         User user = (User) authentication.getPrincipal();
         ClanDTO clanDTO = clanService.createClan(clanFormCreate, user.getId());
       //        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -37,7 +40,8 @@ public class ClanController {
 
     // find by id
     @GetMapping("/{id}")
-    public ResponseEntity<ClanDTO> getClanById(@PathVariable Long id){
+    public ResponseEntity<ClanDTO> getClanById(
+            @PathVariable Long id){
         ClanDTO clanDTO = clanService.getClanById(id);
         return ResponseEntity.ok(clanDTO);
     }
@@ -51,16 +55,21 @@ public class ClanController {
 
     // join
     @PostMapping("/join/{clanId}")
-    public ResponseEntity<JoinClanDTO> joinClan(@PathVariable Long clanId, Authentication authentication){
+    public ResponseEntity<JoinClanDTO> joinClan(
+            @PathVariable Long clanId,
+            Authentication authentication){
         User user= (User) authentication.getPrincipal();
-        JoinClanDTO jcDTO = clanService.joinClan(clanId, user);
+        JoinClanDTO jcDTO = joinRequestService.joinClan(clanId, user);
         JoinClanDTO clanDTO = JoinClanDTO.fromEntity(clanService.getById(clanId), jcDTO.message());
         return ResponseEntity.ok(clanDTO);
     }
 
     //update
     @PutMapping("/edit/{clanId}")
-    public ResponseEntity<ClanDTO> updateClan(@PathVariable Long clanId, @RequestBody ClanFormEdit clanFormEdit, Authentication authentication){
+    public ResponseEntity<ClanDTO> updateClan(
+            @PathVariable Long clanId,
+            @RequestBody ClanFormEdit clanFormEdit,
+            Authentication authentication){
         User user= (User) authentication.getPrincipal();
         ClanDTO clanDTO= clanService.updateClan(user,clanId,clanFormEdit);
         return ResponseEntity.ok(clanDTO);
@@ -68,7 +77,9 @@ public class ClanController {
 
     //delete
     @DeleteMapping("delete/{clanId}")
-    public ResponseEntity<MessageDTO> deleteClan(@PathVariable Long clanId, Authentication authentication){
+    public ResponseEntity<MessageDTO> deleteClan(
+            @PathVariable Long clanId,
+            Authentication authentication){
         User user= (User) authentication.getPrincipal();
         MessageDTO message=clanService.deleteClan(clanId,user);
         return ResponseEntity.ok(message);
@@ -76,7 +87,9 @@ public class ClanController {
 
     // Leave Clan
     @PostMapping("/leave/{clanId}")
-    public ResponseEntity<MessageDTO> leaveClan(@PathVariable Long clanId, Authentication authentication) {
+    public ResponseEntity<MessageDTO> leaveClan(
+            @PathVariable Long clanId,
+            Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         Long userId= user.getId();
         MessageDTO messageDTO= clanService.leaveClan(clanId, userId);
@@ -107,10 +120,8 @@ public class ClanController {
 
         User currentUser = (User) authentication.getPrincipal();
         UserDTO user = userService.getUserById(userId);
-        MessageDTO messageDTO=clanService.handleJoinRequest(clanId, userId, currentUser, accept);
+        MessageDTO messageDTO= joinRequestService.handleJoinRequest(clanId, userId, currentUser, accept);
         return ResponseEntity.ok(messageDTO);
     }
-
-
 
 }

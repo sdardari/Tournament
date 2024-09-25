@@ -16,11 +16,9 @@ public interface ClanService {
     ClanDTO getClanById(long id);
     Clan getById(long id);
     List<ClanDTO> getAllClans();
-    JoinClanDTO joinClan(Long clanId, User user);
     ClanDTO updateClan(User user,Long id, ClanFormEdit clanFormEdit);
     MessageDTO deleteClan(Long id, User user);
     MessageDTO leaveClan(Long clanId, Long userId);
     MessageDTO setRole(Long clanId, UserDTO user, ClanRole role, User currentUser);
-    MessageDTO handleJoinRequest(Long clanId, Long userId, User user, boolean accept);
 
 }
