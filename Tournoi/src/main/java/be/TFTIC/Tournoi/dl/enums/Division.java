@@ -1,6 +1,6 @@
 package be.TFTIC.Tournoi.dl.enums;
 
-public enum Tier {
+public enum Division {
     IRON,
     BRONZE,
     SILVER,
