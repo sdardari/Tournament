@@ -58,8 +58,13 @@ public class Match {
 
     private LocalDate dateOfMatch;
 
-    public Match(String team1, String team2) {
+    public Match(String team1, String team2, Tournament tournament) {
+        this.tournament = tournament;
         this.team1Players = team1;
         this.team2Players = team2;
+    }
+
+    public Match(Place place) {
+        this.place = place;
     }
 }

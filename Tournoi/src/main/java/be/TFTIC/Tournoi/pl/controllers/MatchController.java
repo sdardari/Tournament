@@ -3,7 +3,6 @@ package be.TFTIC.Tournoi.pl.controllers;
 import be.TFTIC.Tournoi.bll.services.MatchService;
 import be.TFTIC.Tournoi.bll.services.PlaceService;
 import be.TFTIC.Tournoi.dl.entities.Match;
-import be.TFTIC.Tournoi.dl.entities.Place;
 import be.TFTIC.Tournoi.pl.models.matchDTO.MatchDetailDTO;
 import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
 import lombok.RequiredArgsConstructor;
@@ -48,13 +47,21 @@ public class MatchController {
 //        return ResponseEntity.ok(MatchDetailDTO.fromMatch(createdMatch));
 //    }
 //
-//    @PutMapping("/{id}")
-//    public ResponseEntity<MatchDetailDTO> updateMatch(@PathVariable Long id, @RequestBody @Validated MatchForm matchForm) {
-//        matchService.update(id, matchForm);
-//        Match updatedMatch = matchService.getById(id);
-//        MatchDetailDTO matchDetailDTO = MatchDetailDTO.fromMatch(updatedMatch);
-//        return ResponseEntity.ok(matchDetailDTO);
-//    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MatchDetailDTO> updateMatch(@PathVariable Long id, @RequestBody @Validated MatchForm matchForm) {
+        matchService.update(id, matchForm);
+        Match updatedMatch = matchService.getById(id);
+        MatchDetailDTO matchDetailDTO = MatchDetailDTO.fromMatch(updatedMatch);
+        return ResponseEntity.ok(matchDetailDTO);
+    }
+
+    @GetMapping("/{id}/result")
+    public ResponseEntity<String> getMatchResult(@PathVariable Long id){
+        Match match = matchService.getById(id);
+        String winner = matchService.determineMatchWinner(match);
+        return ResponseEntity.ok(winner);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMatch(@PathVariable Long id) {

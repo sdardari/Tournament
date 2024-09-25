@@ -43,23 +43,20 @@ public class MatchServiceImpl implements MatchService {
 //        return matchRepository.save(match);
 //    }
 
-//    @Override
-//    public void update(Long id, MatchForm matchForm) {
-//        Match oldMatch = getById(id);
-//        List<User> users = userService.fromStringToUser(matchForm.toEntity());
-//
-//        oldMatch.setTeam1Players(matchForm.getTeamId1());
-//        oldMatch.setTeam2Players(matchForm.getTeamId2());
-//        oldMatch.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
-//        oldMatch.setScoreTeam1Set1(matchForm.getScoreTeam1Set1());
-//        oldMatch.setScoreTeam2Set1(matchForm.getScoreTeam2Set1());
-//        oldMatch.setScoreTeam1Set2(matchForm.getScoreTeam2Set2());
-//        oldMatch.setScoreTeam2Set2(matchForm.getScoreTeam2Set2());
-//        oldMatch.setScoreTeam1Set3(matchForm.getScoreTeam1Set3());
-//        oldMatch.setScoreTeam2Set3(matchForm.getScoreTeam2Set3());
-//
-//        matchRepository.save(oldMatch);
-//    }
+    @Override
+    public void update(Long id, MatchForm matchForm) {
+        Match oldMatch = getById(id);
+
+        oldMatch.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
+        oldMatch.setScoreTeam1Set1(matchForm.getScoreTeam1Set1());
+        oldMatch.setScoreTeam2Set1(matchForm.getScoreTeam2Set1());
+        oldMatch.setScoreTeam1Set2(matchForm.getScoreTeam1Set2());
+        oldMatch.setScoreTeam2Set2(matchForm.getScoreTeam2Set2());
+        oldMatch.setScoreTeam1Set3(matchForm.getScoreTeam1Set3());
+        oldMatch.setScoreTeam2Set3(matchForm.getScoreTeam2Set3());
+
+        matchRepository.save(oldMatch);
+    }
 
     @Override
     public void delete(Long id) {
@@ -73,12 +70,28 @@ public class MatchServiceImpl implements MatchService {
         int team1Wins = 0;
         int team2Wins = 0;
 
-        if (determinerSetWinner(match.getScoreTeam1Set1(), match.getScoreTeam2Set1()).equals("Team 1")) team1Wins++;
-        if (determinerSetWinner(match.getScoreTeam1Set2(), match.getScoreTeam2Set2()).equals("Team 1")) team1Wins++;
-        if (match.getScoreTeam1Set3() != null && determinerSetWinner(match.getScoreTeam1Set3(), match.getScoreTeam2Set3()).equals("Team 1"))
+        if (determinerSetWinner(match.getScoreTeam1Set1(), match.getScoreTeam2Set1()).equals("Team 1")) {
             team1Wins++;
+        } else {
+            team2Wins++;
+        }
 
-        return team1Wins >= 2 ? "Team 1" : "Team 2";
+        if (determinerSetWinner(match.getScoreTeam1Set2(), match.getScoreTeam2Set2()).equals("Team 1")) {
+            team1Wins++;
+        } else {
+            team2Wins++;
+        }
+
+        if (match.getScoreTeam1Set3() != null) {
+            if (determinerSetWinner(match.getScoreTeam1Set3(), match.getScoreTeam2Set3()).equals("Team 1")) {
+                team1Wins++;
+            } else {
+                team2Wins++;
+            }
+        }
+        String winner = team1Wins >= 2 ? match.getTeam1Players() : match.getTeam2Players();
+        return winner;
+
     }
 
     @Override

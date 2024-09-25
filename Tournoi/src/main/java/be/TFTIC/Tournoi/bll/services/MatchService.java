@@ -11,7 +11,7 @@ public interface MatchService {
     List<Match> getAll();
     Match getById(Long id);
 //    Match createMatch(MatchForm matchForm);
-//    void update(Long id, MatchForm matchForm);
+    void update(Long id, MatchForm matchForm);
     void delete(Long id);
     // endregion
 

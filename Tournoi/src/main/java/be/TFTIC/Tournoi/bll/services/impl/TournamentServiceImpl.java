@@ -2,8 +2,6 @@ package be.TFTIC.Tournoi.bll.services.impl;
 
 import be.TFTIC.Tournoi.bll.services.MatchService;
 import be.TFTIC.Tournoi.bll.services.TournamentService;
-import be.TFTIC.Tournoi.bll.services.UserService;
-import be.TFTIC.Tournoi.dal.repositories.MatchRepository;
 import be.TFTIC.Tournoi.dal.repositories.TeamRepository;
 import be.TFTIC.Tournoi.dal.repositories.TournamentRepository;
 import be.TFTIC.Tournoi.dl.entities.Match;
@@ -11,15 +9,12 @@ import be.TFTIC.Tournoi.dl.entities.Team;
 import be.TFTIC.Tournoi.dl.entities.Tournament;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.pl.models.matchDTO.CreateMatchForm;
-import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -100,7 +95,7 @@ public class TournamentServiceImpl implements TournamentService {
 
         participants.add(userTeam);
         if(participants.size() == tournament.getNbPlace()){
-            startTournament(participants);
+            startTournament(participants, id);
         }
         tournamentRepository.save(tournament);
     }
@@ -125,11 +120,12 @@ public class TournamentServiceImpl implements TournamentService {
         return teams;
     }
 
-    public void startTournament(List<Team> participant){
+    public void startTournament(List<Team> participant, Long id){
         List<Team> teams = createTeam(participant);
-
+        Tournament tournament = tournamentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("The tournament with id " + id + " not found"));
         for (int i = 0; i < teams.size(); i += 2) {
-            Match match = CreateMatchForm.toEntity(teams.get(i), teams.get(i+1));
+            Match match = CreateMatchForm.toEntity(teams.get(i), teams.get(i+1), tournament);
             matchService.save(match);
         }
     }
