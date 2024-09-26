@@ -13,8 +13,8 @@ import be.TFTIC.Tournoi.dl.enums.RequestStatus;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.clan.*;
+import be.TFTIC.Tournoi.pl.models.message.MessageDTO;
 import lombok.AllArgsConstructor;
-import org.hibernate.mapping.Join;
 import org.springframework.stereotype.Service;
 import be.TFTIC.Tournoi.il.utils.JwtUtils;
 import java.util.List;
@@ -46,13 +46,18 @@ public class ClanServiceImpl implements ClanService{
         clan.setPresident(user.getUsername()) ;
         clan.getMembers().add(user);
         clanRepository.save(clan);
-        return ClanDTO.fromEntity(clan);
+        return ClanDTO.fromEntity(clan, "clan created ");
 
     }
 
     @Override
     public ClanDTO getClanById(long id) {
-        return ClanDTO.fromEntity(getById(id));
+        return ClanDTO.fromEntity(getById(id), "Result of your research");
+    }
+
+    public User getUserById(long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Clan not found"));
     }
 
     public Clan getById(long id){
@@ -63,89 +68,44 @@ public class ClanServiceImpl implements ClanService{
     @Override
     public List<ClanDTO> getAllClans() {
         return clanRepository.findAll().stream()
-                .map(ClanDTO::fromEntity)
+                .map((Clan clan) -> ClanDTO.fromEntity(clan, ""))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public JoinClanDTO joinClan(Long clanId, User user) {
-        Clan clan = getById(clanId);
-        Long userId= user.getId();
-
-        boolean userAlreadyMemberOfClan= clan.getMembers().stream()
-                .anyMatch(member-> member.getId().equals(userId));
-
-        if (userAlreadyMemberOfClan) {
-            return JoinClanDTO.fromEntity(clan, "You are already a member of this clan !");
-        }
-
-        Optional<JoinRequest> existingRequest = joinRequestRepository.findByUserAndClanAndStatus(user, clan, RequestStatus.PENDING);
-        //TODO passer par une méthode implémenter dans un service plutôt que le repo
-
-        if (existingRequest.isPresent()) {
-            return JoinClanDTO.fromEntity(clan, "You already have a pending join request for this clan.");
-        }
-
-        if(!clan.getIsPrivate()&&user.getRanking()>= clan.getMinimumTrophies()){
-            clan.getMembers().add(user);
-            clan.getRoles().put(user.getId(), ClanRole.MEMBER);
-            clanRepository.save(clan);
-            return JoinClanDTO.fromEntity(clan, "Welcome in " + clan.getName() + " !");
-
-        }
-
-        else if (clan.getIsPrivate()){
-            JoinRequest joinRequest= new JoinRequest();
-            joinRequest.setClan(clan);
-            joinRequest.setUser(user);
-            joinRequest.setStatus(RequestStatus.PENDING);
-            joinRequestRepository.save(joinRequest);
-            return JoinClanDTO.fromEntity(clan, "Clan "+ clan.getName() +" is private, your request is pending ");
-        }
-
-        else{
-            return JoinClanDTO.fromEntity(clan, "Cannot join this clan. Rank requirement not met ");
-        }
-    }
-
-    @Override
     public ClanDTO updateClan(User user,Long clanId, ClanFormEdit clanFormEdit) {
-        Clan clan= clanRepository.findById(clanId)
-                .orElseThrow(()->new RuntimeException("Clan not found"));
+        Clan clan= getById(clanId);
 
         Long userId= user.getId();
         ClanRole userRole= clan.getRoles().get(userId);
         if(userRole!= ClanRole.PRESIDENT&& userRole != ClanRole.VICE_PRESIDENT ){
-            throw new RuntimeException("Only the President or Vice President of the clan itself can update the clan ");
+            return ClanDTO.fromEntity(clan,"Clan can only modified by the President, Vice-president of the clan ");
         }
         clan.setName(clanFormEdit.getName());
         clan.setPrivate(clanFormEdit.isPrivate());
         clan.setMinimumTrophies(clanFormEdit.getMinimumTrophies());
 
         clan=clanRepository.save(clan);
-        return ClanDTO.fromEntity(clan);
+        return ClanDTO.fromEntity(clan, "Clan succesfully modified");
     }
 
     @Override
-    public void deleteClan(Long clanId, User user) {
-        Clan clan = clanRepository.findById(clanId)
-                .orElseThrow(() -> new RuntimeException("Clan not found"));
-        //TODO pourquoi le user avec id president ne peut pas supprimer le clan ???
-
+    public MessageDTO deleteClan(Long clanId, User user) {
+        Clan clan = getById(clanId);
          Map<Long, ClanRole> roles = clan.getRoles();
          ClanRole userRole = roles.get(user.getId());
 
         if (user.getRole() != UserRole.ADMIN  && userRole != ClanRole.PRESIDENT) {
-            throw new RuntimeException("Only Admin or President can delete the clan." + userRole + " " + user.getRole());
+            return new MessageDTO("Only Admin or President can delete the clan.");
         }
         joinRequestService.deleteRequestByClan(clan);
         clanRepository.delete(clan);
+        return new MessageDTO("Clan succesfully deleted");
     }
 
     @Override
-    public void leaveClan(Long clanId, Long userId) {
-        Clan clan = clanRepository.findById(clanId)
-                .orElseThrow(() -> new RuntimeException("Clan not found"));
+    public MessageDTO leaveClan(Long clanId, Long userId) {
+        Clan clan = getById(clanId);
         
         boolean isMember = clan.getMembers().stream()
                 .anyMatch(member -> member.getId().equals(userId));
@@ -161,69 +121,43 @@ public class ClanServiceImpl implements ClanService{
                 if (newPresidentId != null) {
                     clan.getRoles().put(newPresidentId, ClanRole.PRESIDENT);
                 } else {
-                    throw new RuntimeException("Promote first a president or vice-president to leave a clan.");
+                    return new MessageDTO("Promote first a president or vice-president to leave a clan.");
                 }
             }
             clan.getMembers().removeIf(member -> member.getId().equals(userId));
             clan.getRoles().remove(userId);
             clanRepository.save(clan);
+            return new MessageDTO("Succesfully left the clan ");
 
         } else {
             throw new RuntimeException("User is not a member of this clan");
         }
+
     }
 
     @Override
-    public void setRole(Long clanId, UserDTO targetUserDTO, ClanRole newRole, User currentUser) {
-        Clan clan = clanRepository.findById(clanId)
-                .orElseThrow(() -> new RuntimeException("Clan not found"));
+    public MessageDTO setRole(Long clanId, UserDTO targetUserDTO, ClanRole newRole, User currentUser) {
+        Clan clan = getById(clanId);
 
         ClanRole currentUserRole = clan.getRoles().get(currentUser.getId());
         if (currentUserRole == null) {
-            throw new RuntimeException("You are not a member of this clan.");
+            return new MessageDTO("You are not a member of this clan.");
         }
         if (currentUserRole != ClanRole.PRESIDENT && currentUserRole != ClanRole.VICE_PRESIDENT) {
-            throw new RuntimeException("Only the President or Vice President can set member roles.");
+            return new MessageDTO("Only the President or Vice President can set member roles.");
         }
         if (currentUserRole == ClanRole.VICE_PRESIDENT && newRole.ordinal() >= ClanRole.VICE_PRESIDENT.ordinal()) {
-            throw new RuntimeException("Vice President can only set roles up to Elder.");
+            return new MessageDTO("Vice President can only set roles up to Elder.");
         }
         if (currentUserRole == ClanRole.PRESIDENT && newRole == ClanRole.PRESIDENT) {
             clan.getRoles().put(currentUser.getId(), ClanRole.VICE_PRESIDENT);
         }
 
-        User targetUser= userRepository.findById(targetUserDTO.getId())
-                .orElseThrow(()->new RuntimeException("user not found"));
+        User targetUser= getUserById(targetUserDTO.getId());
 
         clan.getRoles().put(targetUser.getId(), newRole);
         clanRepository.save(clan);
+        return new MessageDTO("Role succesfully changed");
     }
 
-
-    @Override
-    public void handleJoinRequest(Long clanId, Long userIdToChange, User currentUser, boolean accept) {
-        Clan clan = clanRepository.findById(clanId)
-                .orElseThrow(() -> new RuntimeException("Clan not found"));
-
-        ClanRole currentUserRole = clan.getRoles().get(currentUser.getId());
-        if (currentUserRole == null ||
-                !(currentUserRole == ClanRole.PRESIDENT || currentUserRole == ClanRole.VICE_PRESIDENT)) {
-            throw new RuntimeException("Only Presidents or Vice Presidents can handle join requests.");
-        }
-        User userToChange= userRepository.findById(userIdToChange)
-                .orElseThrow(()-> new RuntimeException("User not found"));
-
-        JoinRequest joinRequest= joinRequestRepository.findByUserAndClanAndStatus(userToChange,clan,RequestStatus.PENDING)
-                .orElseThrow(()-> new RuntimeException("Join request not found "));
-
-        if (accept) {
-            clan.getRoles().put(userToChange.getId(), ClanRole.MEMBER);
-            userRepository.save(userToChange);
-            joinRequest.setStatus(RequestStatus.APPROVED);
-        } else {
-            joinRequest.setStatus(RequestStatus.REJECTED);
-            throw new RuntimeException("Join request has been rejected.");
-        }
-        clanRepository.save(clan);
-    }
-}
+   }

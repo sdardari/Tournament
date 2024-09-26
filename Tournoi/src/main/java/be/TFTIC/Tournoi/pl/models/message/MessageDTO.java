@@ -1,9 +1,9 @@
-package be.TFTIC.Tournoi.pl.models.messageErreur;
+package be.TFTIC.Tournoi.pl.models.message;
 
-public class ErrorDTO {
+public class MessageDTO {
     private String message;
 
-    public ErrorDTO(String message) {
+    public MessageDTO(String message) {
         this.message = message;
     }
 

@@ -50,6 +50,8 @@ public class User implements UserDetails {
     @Column(nullable = false,length = 20)
     private UserRole role;
 
+    @OneToMany(mappedBy="user")
+    private List<FriendShip> friendShips;
 
 
 
@@ -60,6 +62,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
