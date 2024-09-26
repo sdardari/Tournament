@@ -1,4 +1,4 @@
-package be.TFTIC.Tournoi.pl.models.authDTO;
+package be.TFTIC.Tournoi.pl.models.auth;
 
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;

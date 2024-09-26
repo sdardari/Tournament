@@ -6,20 +6,17 @@ import be.TFTIC.Tournoi.dal.repositories.ClanRepository;
 import be.TFTIC.Tournoi.dal.repositories.JoinRequestRepository;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Clan;
-import be.TFTIC.Tournoi.dl.entities.JoinRequest;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
-import be.TFTIC.Tournoi.dl.enums.RequestStatus;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.clan.*;
-import be.TFTIC.Tournoi.pl.models.message.MessageDTO;
+import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import be.TFTIC.Tournoi.il.utils.JwtUtils;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

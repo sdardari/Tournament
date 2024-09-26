@@ -1,4 +1,4 @@
-package be.TFTIC.Tournoi.pl.models.message;
+package be.TFTIC.Tournoi.pl.models.messageException;
 
 public class MessageDTO {
     private String message;

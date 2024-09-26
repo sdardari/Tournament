@@ -6,7 +6,7 @@ import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.clan.*;
-import be.TFTIC.Tournoi.pl.models.message.MessageDTO;
+import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
 
 import java.util.List;
 
