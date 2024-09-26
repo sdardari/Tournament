@@ -47,77 +47,12 @@ public class Ranking {
     @JoinColumn(name = "clan_id", nullable = true)
     private Clan clan;
 
-    public boolean isLegacyRanked() {
-        return nbMatches >= 15;
-    }
-    public void winMatch() {
-        if (!inPromotionUp){
-             this.wins++;
-             this.nbMatches++;
-             this.leaguePoints += 20;
-             checkIsPromoted();
-        } else {
-            statusPromotionUp();
-        }
-    }
-    public void lossMatch() {
-        if (!inPromotionDown){
-            this.losses++;
-            this.nbMatches++;
-            this.leaguePoints -= 15;
-            checkIsUnPromoted();
-        }else{
-            statusPromotionDown();
-        }
-    }
-    public void checkIsPromoted() {
-        if (leaguePoints >=100){
-            inPromotionUp = true;
-            initializer();
-        };
-    }
-    public void checkIsUnPromoted() {
-        if(leaguePoints >=0){
-            inPromotionDown = true;
-            initializer();
-        };
-    }
-    public void statusPromotionUp() {
-        if(wins == 3){
-            promoteUp();
-            inPromotionUp = false;
-        } else if (losses == 3) {
-            initializer();
-            leaguePoints += 90;
-            inPromotionUp = false;
-        }
-    }
-    public void statusPromotionDown() {
-        if(wins >= 3){
-            initializer();
-            leaguePoints += 35;
-            inPromotionDown = false;
-        }else if (losses >= 3) {
-            promoteDown();
-        }
-    }
-    public void initializer(){
-        leaguePoints = 0;
-        wins = 0;
-        losses = 0;
-    }
-    public void promoteUp(){
-        if (division.ordinal() < Division.values().length -1){
-            division = Division.values()[division.ordinal() +1];// Passer à la division supérieure
-        }
-        initializer();
-        leaguePoints += 35;
-    }
-    public void promoteDown(){
-        if(division.ordinal() > 0){
-            division = Division.values()[division.ordinal()-1];
-        }
-        initializer();
-        leaguePoints += 90;
+    @PrePersist
+    protected void onCreate() {
+        this.division = Division.UNRANKED;
+        this.leaguePoints = 0;
+        this.nbMatches = 0;
+        this.wins = 0;
+        this.losses = 0;
     }
 }

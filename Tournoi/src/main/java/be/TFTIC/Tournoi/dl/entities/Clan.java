@@ -34,9 +34,6 @@ public class Clan {
     }
 
 
-    @Column
-    private int minimumTrophies=0;
-
     @ManyToMany
     @JoinTable(
             name = "user_clan",
@@ -44,7 +41,6 @@ public class Clan {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> members = new HashSet<>();
-
 
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -55,15 +51,10 @@ public class Clan {
     private Map<Long, ClanRole> roles = new HashMap<>();
 
 
-    public Clan (String name, boolean isPrivate, int minimumTrophies){
+    public Clan (String name, boolean isPrivate){
         this.name=name;
         this.isPrivate=isPrivate;
-        this.minimumTrophies=minimumTrophies;
 
-    }
-
-    public boolean canJoin(User user) {
-        return !isPrivate && user.getRanking() >= minimumTrophies;
     }
 
     @OneToOne

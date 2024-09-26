@@ -57,12 +57,24 @@ public class User implements UserDetails {
     private Clan clan;
 
 
-    public User(String username, String firstname, String lastname, String email, String password, int i, String admin123, UserRole admin) {
+    public User(String username, String firstname, String lastname, String email, String password, UserRole role, Clan clan) {
         this.username = username;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+        this.role = role;
+        this.clan = clan;
+    }
+
+
+    public User(String username, String firstname, String lastname, String email, String password) {
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.password = password;
+        this.ranking = new Ranking();
     }
 
     @Override

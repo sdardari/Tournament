@@ -24,8 +24,7 @@ public class UserRegisterForm {
     String password;
 
     //rajouter les validation ci-dessus
-        public User toEntity () {
-        return new User(username, firstname, lastname, email, password, 0, passwordEncoder.encode("admin123"), UserRole.ADMIN);
-
+    public User toEntity () {
+        return new User(username, firstname, lastname, email, password);
     }
 }

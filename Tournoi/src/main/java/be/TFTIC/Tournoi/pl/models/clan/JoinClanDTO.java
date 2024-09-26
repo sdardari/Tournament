@@ -9,7 +9,6 @@ public record JoinClanDTO(
         Long id,
         String name,
         boolean isPrivate,
-        int minimumTrophies,
         String president,
         Set<User> members,
         String message
@@ -20,7 +19,6 @@ public record JoinClanDTO(
                 clan.getClanId(),
                 clan.getName(),
                 clan.getIsPrivate(),
-                clan.getMinimumTrophies(),
                 clan.getPresident(),
                 clan.getMembers(),
                 message

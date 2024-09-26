@@ -26,6 +26,6 @@ public class ClanForm {
     // rajout par la suite de changement de position de président max 2
 
     public Clan toEntity(){
-        return new Clan(name,isPrivate,minimumTrophies);
+        return new Clan(name,isPrivate);
     }
 }

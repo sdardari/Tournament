@@ -5,6 +5,7 @@ import be.TFTIC.Tournoi.dal.repositories.AddressRepository;
 import be.TFTIC.Tournoi.dal.repositories.PlaceRepository;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Address;
+import be.TFTIC.Tournoi.dl.entities.Clan;
 import be.TFTIC.Tournoi.dl.entities.Place;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
@@ -25,15 +26,16 @@ public class DataInitializer {
     CommandLineRunner initUsers(UserRepository userRepository) {
         return args -> {
             if (userRepository.count() == 0) { // To avoid duplicate entries
-                userRepository.save(new User(null, "adminUser", "Admin", "User", "admin@example.com", 0, passwordEncoder.encode("admin123"), UserRole.ADMIN));
-                userRepository.save(new User(null, "johnDoe", "John", "Doe", "john.doe@example.com", 0, passwordEncoder.encode("password1"), UserRole.USER));
-                userRepository.save(new User(null, "janeDoe", "Jane", "Doe", "jane.doe@example.com", 0, passwordEncoder.encode("password2"), UserRole.USER));
-                userRepository.save(new User(null, "samSmith", "Sam", "Smith", "sam.smith@example.com", 0, passwordEncoder.encode("password3"), UserRole.USER));
-                userRepository.save(new User(null, "lisaJones", "Lisa", "Jones", "lisa.jones@example.com", 0, passwordEncoder.encode("password4"), UserRole.USER));
-                userRepository.save(new User(null, "mikeBrown", "Mike", "Brown", "mike.brown@example.com", 0, passwordEncoder.encode("password5"), UserRole.USER));
-                userRepository.save(new User(null, "lucyDavis", "Lucy", "Davis", "lucy.davis@example.com", 0, passwordEncoder.encode("password6"), UserRole.USER));
+                userRepository.save(new User("adminUser", "Admin", "User", "admin@example.com", passwordEncoder.encode("admin123"), UserRole.ADMIN, null));
+                userRepository.save(new User("johnDoe", "John", "Doe", "john.doe@example.com", passwordEncoder.encode("password1"), UserRole.USER, null));
+                userRepository.save(new User("janeDoe", "Jane", "Doe", "jane.doe@example.com", passwordEncoder.encode("password2"), UserRole.USER, null));
+                userRepository.save(new User("samSmith", "Sam", "Smith", "sam.smith@example.com", passwordEncoder.encode("password3"), UserRole.USER, null));
+                userRepository.save(new User("lisaJones", "Lisa", "Jones", "lisa.jones@example.com", passwordEncoder.encode("password4"), UserRole.USER, null));
+                userRepository.save(new User("mikeBrown", "Mike", "Brown", "mike.brown@example.com", passwordEncoder.encode("password5"), UserRole.USER, null));
+                userRepository.save(new User("lucyDavis", "Lucy", "Davis", "lucy.davis@example.com", passwordEncoder.encode("password6"), UserRole.USER, null));
             }
         };
+
     }
 
     @Bean
@@ -52,7 +54,6 @@ public class DataInitializer {
     CommandLineRunner initPlaces(PlaceRepository placeRepository, AddressRepository addressRepository) {
         return args -> {
             if (placeRepository.count() == 0) { // Vérifie que les lieux n'ont pas déjà été insérés
-                // Récupération des adresses existantes
                 Address address1 = addressRepository.findById(1L).orElse(null);
                 Address address2 = addressRepository.findById(2L).orElse(null);
                 Address address3 = addressRepository.findById(3L).orElse(null);

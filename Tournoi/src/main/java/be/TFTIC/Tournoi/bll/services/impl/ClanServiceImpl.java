@@ -41,7 +41,6 @@ public class ClanServiceImpl implements ClanService{
         Clan clan = cLanFormCreate.toEntity();
         clan.setName(cLanFormCreate.getName());
         clan.setPrivate(cLanFormCreate.isPrivate());
-        clan.setMinimumTrophies(cLanFormCreate.getMinimumTrophies());
         clan.getRoles().put(userId, ClanRole.PRESIDENT);
         clan.setPresident(user.getUsername()) ;
         clan.getMembers().add(user);
@@ -86,13 +85,13 @@ public class ClanServiceImpl implements ClanService{
             return JoinClanDTO.fromEntity(clan, "You already have a pending join request for this clan.");
         }
 
-        if(!clan.getIsPrivate()&&user.getRanking()>= clan.getMinimumTrophies()){
-            clan.getMembers().add(user);
-            clan.getRoles().put(user.getId(), ClanRole.MEMBER);
-            clanRepository.save(clan);
-            return JoinClanDTO.fromEntity(clan, "Welcome in " + clan.getName() + " !");
-
-        }
+      //  if(!clan.getIsPrivate()&&user.getRanking()>= clan.getMinimumTrophies()){
+      //      clan.getMembers().add(user);
+      //      clan.getRoles().put(user.getId(), ClanRole.MEMBER);
+      //      clanRepository.save(clan);
+      //      return JoinClanDTO.fromEntity(clan, "Welcome in " + clan.getName() + " !");
+//
+       // }
 
         else if (clan.getIsPrivate()){
             JoinRequest joinRequest= new JoinRequest();
@@ -120,7 +119,7 @@ public class ClanServiceImpl implements ClanService{
         }
         clan.setName(clanFormEdit.getName());
         clan.setPrivate(clanFormEdit.isPrivate());
-        clan.setMinimumTrophies(clanFormEdit.getMinimumTrophies());
+      //  clan.setMinimumTrophies(clanFormEdit.getMinimumTrophies());
 
         clan=clanRepository.save(clan);
         return ClanDTO.fromEntity(clan);
