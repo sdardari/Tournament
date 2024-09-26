@@ -5,8 +5,6 @@ import be.TFTIC.Tournoi.dal.repositories.RankingRepository;
 import be.TFTIC.Tournoi.dl.entities.Ranking;
 import be.TFTIC.Tournoi.dl.enums.Division;
 import be.TFTIC.Tournoi.pl.models.rankingDTO.RankingDetailDTO;
-import be.TFTIC.Tournoi.pl.models.rankingDTO.RankingForm;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +53,7 @@ public class RankingServiceImpl implements RankingService {
             ranking.setWins(ranking.getWins() + 1);
             ranking.setNbMatches(ranking.getNbMatches() + 1);
             ranking.setLeaguePoints(ranking.getLeaguePoints() + 20);
-            checkIspromotedUp(rankingId);
+            isPromotedUp(rankingId);
         }else {
             statusPromotedUp(rankingId);
         }
@@ -68,14 +66,14 @@ public class RankingServiceImpl implements RankingService {
             ranking.setLosses(ranking.getLosses() + 1);
             ranking.setNbMatches(ranking.getNbMatches() + 1);
             ranking.setLeaguePoints(ranking.getLeaguePoints() - 20);
-            checkIspromotedDown(rankingId);
+            isPromotedDown(rankingId);
         }else {
             statusPromotedDown(rankingId);
         }
     }
 
     @Override
-    public void checkIspromotedUp(Long rankingId) {
+    public void isPromotedUp(Long rankingId) {
         Ranking ranking = getRankingById(rankingId);
         if(ranking.getLeaguePoints() >= 100){
             ranking.setInPromotionUp(true);
@@ -84,7 +82,7 @@ public class RankingServiceImpl implements RankingService {
     }
 
     @Override
-    public void checkIspromotedDown(Long rankingId) {
+    public void isPromotedDown(Long rankingId) {
         Ranking ranking = getRankingById(rankingId);
         if(ranking.getLeaguePoints() >= 0){
            ranking.setInPromotionDown(true);

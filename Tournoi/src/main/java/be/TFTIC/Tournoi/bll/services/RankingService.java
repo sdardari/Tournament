@@ -14,8 +14,8 @@ public interface RankingService {
     boolean isLegacyRanked(Long rankingId);
     void winMatch(Long rankingId);
     void lossMatch(Long rankingId);
-    void checkIspromotedUp(Long rankingId);
-    void checkIspromotedDown(Long rankingId);
+    void isPromotedUp(Long rankingId);
+    void isPromotedDown(Long rankingId);
     void statusPromotedUp(Long rankingId);
     void statusPromotedDown(Long rankingId);
     void initializer(Long rankingId);
