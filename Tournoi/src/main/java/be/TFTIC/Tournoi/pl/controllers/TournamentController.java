@@ -76,4 +76,10 @@ public class TournamentController {
         tournamentService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/winner")
+    public ResponseEntity<String> winnerTournament(@PathVariable Long id){
+        String winner = tournamentService.getWinner(id);
+        return ResponseEntity.ok(winner);
+    }
 }

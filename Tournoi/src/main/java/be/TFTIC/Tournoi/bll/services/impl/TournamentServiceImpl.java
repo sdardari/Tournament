@@ -1,6 +1,8 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.services.MatchFactory;
 import be.TFTIC.Tournoi.bll.services.MatchService;
+import be.TFTIC.Tournoi.bll.services.TeamService;
 import be.TFTIC.Tournoi.bll.services.TournamentService;
 import be.TFTIC.Tournoi.dal.repositories.TeamRepository;
 import be.TFTIC.Tournoi.dal.repositories.TournamentRepository;
@@ -25,6 +27,9 @@ public class TournamentServiceImpl implements TournamentService {
     private final TournamentRepository tournamentRepository;
     private final TeamRepository teamRepository;
     private final MatchService matchService;
+    private final TeamService teamService;
+    private List<String> nextTurnTeam = new ArrayList<>();
+    private Integer nbMatch = 0;
 
     @Override
     public List<Tournament> getAll() {
@@ -39,6 +44,15 @@ public class TournamentServiceImpl implements TournamentService {
 
     @Override
     public Long create(Tournament tournament) {
+        if(tournament.getNbPlace()<4){
+            throw new RuntimeException("Pas assez de place dans le tournoi");
+        }
+        if(tournament.getNbPlace()>32){
+            throw new RuntimeException("Pas assez de place dans le tournoi");
+        }
+        if(tournament.getNbPlace()%4 != 0){
+            throw new RuntimeException("il faut pouvoir créer un nombre de place divisible par 4!");
+        }
         tournament.setDateDebut(LocalDateTime.now());
         Tournament savetournament = tournamentRepository.save(tournament);
         return savetournament.getTournamentId();
@@ -107,26 +121,49 @@ public class TournamentServiceImpl implements TournamentService {
         return tournament.getParticipant();
     }
 
-    public List<Team> createTeam(List<Team> users){
-        List<Team> teams = new ArrayList<>();
+    public List<String> createTeam(List<Team> users){
+        List<String> teams = new ArrayList<>();
 
         for (int i = 0; i < users.size(); i += 2) {
-            Team team = new Team();
-            team.setTeamId(users.get(i).getTeamId() + "_" + users.get(i+1).getTeamId());
-            team.setName(users.get(i).getName() + "_" + users.get(i+1).getName());
-
-            teams.add(team);
+            teams.add(users.get(i).getTeamId() + "_" + users.get(i+1).getTeamId());
         }
         return teams;
     }
 
     public void startTournament(List<Team> participant, Long id){
-        List<Team> teams = createTeam(participant);
+        List<String> teams = createTeam(participant);
         Tournament tournament = tournamentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("The tournament with id " + id + " not found"));
-        for (int i = 0; i < teams.size(); i += 2) {
-            Match match = CreateMatchForm.toEntity(teams.get(i), teams.get(i+1), tournament);
-            matchService.save(match);
+        createMatch(teams, tournament);
+    }
+
+    public void createMatch(List<String> teams, Tournament tournament){
+        if(nbMatch.equals(1)){
+            winnerTournament(teams, tournament);
+        } else {
+            nbMatch = 0;
+            for (int i = 0; i < teams.size(); i += 2) {
+                nbMatch++;
+                Match match = CreateMatchForm.toEntity(teams.get(i), teams.get(i + 1), tournament);
+                matchService.save(match);
+            }
         }
+    }
+    @Override
+    public void nextTurn(String teamId, Tournament tournament){
+        nextTurnTeam.add(teamId);
+        createMatch(nextTurnTeam, tournament);
+    }
+    @Override
+    public void winnerTournament(List<String> winner, Tournament tournament){
+        tournament.setWinner(winner.getFirst());
+        tournamentRepository.save(tournament);
+    }
+
+    @Override
+    public String getWinner(Long id){
+        Tournament tournament = getById(id);
+        String winner = tournament.getWinner();
+        return winner;
     }
 }

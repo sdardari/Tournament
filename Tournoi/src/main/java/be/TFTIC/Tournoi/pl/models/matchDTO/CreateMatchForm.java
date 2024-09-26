@@ -7,7 +7,7 @@ import be.TFTIC.Tournoi.dl.entities.Tournament;
 public record CreateMatchForm (
 
 ){
-    public static Match toEntity(Team team1, Team team2, Tournament tournament){
-        return new Match(team1.getTeamId(), team2.getTeamId(), tournament);
+    public static Match toEntity(String team1, String team2, Tournament tournament){
+        return new Match(team1, team2, tournament);
     }
 }

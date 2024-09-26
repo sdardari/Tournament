@@ -16,8 +16,8 @@ public interface MatchService {
     // endregion
 
     // region Logic Match
-    String determineMatchWinner(Match match);
-    String determinerSetWinner(int scoreTeam1, int scoreTeam2);
+//    String determineMatchWinner(Match match);
+//    String determinerSetWinner(int scoreTeam1, int scoreTeam2);
 
     // endregion
     Match save(Match match);

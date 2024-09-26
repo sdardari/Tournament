@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
+import be.TFTIC.Tournoi.bll.services.MatchFactory;
 import be.TFTIC.Tournoi.bll.services.MatchService;
 import be.TFTIC.Tournoi.bll.services.PlaceService;
 import be.TFTIC.Tournoi.dl.entities.Match;
@@ -19,6 +20,7 @@ public class MatchController {
 
     private final MatchService matchService;
     private final PlaceService placeService;
+    private final MatchFactory matchFactory;
 
     @GetMapping
     public ResponseEntity<List<MatchDetailDTO>> getAllMatches() {
@@ -59,7 +61,7 @@ public class MatchController {
     @GetMapping("/{id}/result")
     public ResponseEntity<String> getMatchResult(@PathVariable Long id){
         Match match = matchService.getById(id);
-        String winner = matchService.determineMatchWinner(match);
+        String winner = matchFactory.determineMatchWinner(match);
         return ResponseEntity.ok(winner);
     }
 

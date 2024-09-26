@@ -1,8 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.services.MatchService;
-import be.TFTIC.Tournoi.bll.services.PlaceService;
-import be.TFTIC.Tournoi.bll.services.UserService;
+import be.TFTIC.Tournoi.bll.services.*;
 import be.TFTIC.Tournoi.dal.repositories.MatchRepository;
 
 import be.TFTIC.Tournoi.dl.entities.Match;
@@ -54,6 +52,7 @@ public class MatchServiceImpl implements MatchService {
         oldMatch.setScoreTeam2Set2(matchForm.getScoreTeam2Set2());
         oldMatch.setScoreTeam1Set3(matchForm.getScoreTeam1Set3());
         oldMatch.setScoreTeam2Set3(matchForm.getScoreTeam2Set3());
+        oldMatch.setPlayed(true);
 
         matchRepository.save(oldMatch);
     }
@@ -62,41 +61,6 @@ public class MatchServiceImpl implements MatchService {
     public void delete(Long id) {
         Match oldMatch = getById(id);
         matchRepository.delete(oldMatch);
-    }
-
-    @Override
-    public String determineMatchWinner(Match match) {
-        //TO DO : renvoyer ID Winner
-        int team1Wins = 0;
-        int team2Wins = 0;
-
-        if (determinerSetWinner(match.getScoreTeam1Set1(), match.getScoreTeam2Set1()).equals("Team 1")) {
-            team1Wins++;
-        } else {
-            team2Wins++;
-        }
-
-        if (determinerSetWinner(match.getScoreTeam1Set2(), match.getScoreTeam2Set2()).equals("Team 1")) {
-            team1Wins++;
-        } else {
-            team2Wins++;
-        }
-
-        if (match.getScoreTeam1Set3() != null) {
-            if (determinerSetWinner(match.getScoreTeam1Set3(), match.getScoreTeam2Set3()).equals("Team 1")) {
-                team1Wins++;
-            } else {
-                team2Wins++;
-            }
-        }
-        String winner = team1Wins >= 2 ? match.getTeam1Players() : match.getTeam2Players();
-        return winner;
-
-    }
-
-    @Override
-    public String determinerSetWinner(int scoreTeam1, int scoreTeam2) {
-        return scoreTeam1 > scoreTeam2 ? "Team 1" : "Team 2";
     }
 
     @Override
