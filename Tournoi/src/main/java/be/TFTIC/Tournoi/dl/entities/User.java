@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.dl.entities;
 
+import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import lombok.*;
 import jakarta.persistence.*;
@@ -21,27 +22,24 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
+    @Column(name="user_id")
     private Long Id;
 
     @Column(nullable = false)
-    @EqualsAndHashCode.Include
     private String username;
 
     @Column(nullable = false)
-    @EqualsAndHashCode.Include
     private String firstname;
 
     @Column(nullable = false)
-    @EqualsAndHashCode.Include
     private String lastname;
 
     @Column(nullable = false, unique = true)
-    @EqualsAndHashCode.Include
     private String email;
 
     @Column
-    private Integer ranking;
+    private int ranking;
+
 
     @Setter
     @Column(nullable = false)
@@ -51,10 +49,11 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false,length = 20)
     private UserRole role;
-    // Many-to-one relation with Clan
-    @ManyToOne
-    @JoinColumn(name = "clan_id")
-    private Clan clan;
+
+    @OneToMany(mappedBy="user")
+    private List<FriendShip> friendShips;
+
+
 
     public User(String username, String firstname, String lastname, String email, String password) {
         this.username = username;
@@ -63,6 +62,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

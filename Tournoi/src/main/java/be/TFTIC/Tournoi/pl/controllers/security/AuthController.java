@@ -7,10 +7,8 @@ import be.TFTIC.Tournoi.il.utils.JwtUtils;
 import be.TFTIC.Tournoi.pl.models.authDTO.UserLoginForm;
 import be.TFTIC.Tournoi.pl.models.authDTO.UserRegisterForm;
 import be.TFTIC.Tournoi.pl.models.authDTO.UserTokenDTO;
-import be.TFTIC.Tournoi.pl.models.messageErreur.ErrorDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,15 +29,12 @@ public class AuthController {
         return ResponseEntity.ok(mapUserToken(u));
     }
 
+    // a changer le ? en voir project
     @PostMapping("/login")
     @PreAuthorize("isAnonymous()")
-    public ResponseEntity<?> login(@Valid @RequestBody UserLoginForm form) {
-        try {
+    public ResponseEntity<UserTokenDTO> login(@Valid @RequestBody UserLoginForm form) {
             User u = authService.login(form.username(), form.password());
             return ResponseEntity.ok(mapUserToken(u));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorDTO("Invalid credentials"));
-        }
     }
 
     private UserTokenDTO mapUserToken(User u) {
