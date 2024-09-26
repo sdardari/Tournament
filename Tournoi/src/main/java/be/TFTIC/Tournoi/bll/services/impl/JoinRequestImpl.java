@@ -52,8 +52,6 @@ public class JoinRequestImpl implements JoinRequestService {
         }
 
         Optional<JoinRequest> existingRequest = joinRequestRepository.findByUserAndClanAndStatus(user, clan, RequestStatus.PENDING);
-        //TODO passer par une méthode implémenter dans un service plutôt que le repo
-
         if (existingRequest.isPresent()) {
             return ClanDTO.fromEntity(clan, "You already have a pending join request for this clan.");
         }
