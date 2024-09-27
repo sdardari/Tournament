@@ -1,12 +1,10 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.services.MatchFactory;
-import be.TFTIC.Tournoi.bll.services.MatchService;
-import be.TFTIC.Tournoi.bll.services.TournamentService;
+import be.TFTIC.Tournoi.bll.services.*;
 import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.Team;
 import be.TFTIC.Tournoi.dl.entities.Tournament;
-import be.TFTIC.Tournoi.pl.models.matchDTO.CreateMatchForm;
+import be.TFTIC.Tournoi.dl.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +17,9 @@ public class MatchFactoryImpl implements MatchFactory {
 
     private final MatchService matchService;
     private final TournamentService tournamentService;
+    private final TeamService teamService;
+    private final UserService userService;
+    private final RankingService rankingService;
     private Integer nbMatch = 0;
     private List<Team> nextTurnTeam = new ArrayList<>();
 
@@ -42,28 +43,45 @@ public class MatchFactoryImpl implements MatchFactory {
         int team1Wins = 0;
         int team2Wins = 0;
 
-        if (determinerSetWinner(match.getScoreTeam1Set1(), match.getScoreTeam2Set1()).equals("Team 1")) {
+        if (determinerSetWinner(match.getScoreTeam1Set1(), match.getScoreTeam2Set1())
+                .equals(match.getTeam1Players())) {
             team1Wins++;
         } else {
             team2Wins++;
         }
 
-        if (determinerSetWinner(match.getScoreTeam1Set2(), match.getScoreTeam2Set2()).equals("Team 1")) {
+        if (determinerSetWinner(match.getScoreTeam1Set2(), match.getScoreTeam2Set2())
+                .equals("Team 1")) {
             team1Wins++;
         } else {
             team2Wins++;
         }
 
         if (match.getScoreTeam1Set3() != null) {
-            if (determinerSetWinner(match.getScoreTeam1Set3(), match.getScoreTeam2Set3()).equals("Team 1")) {
+            if (determinerSetWinner(match.getScoreTeam1Set3(), match.getScoreTeam2Set3())
+                    .equals("Team 1")) {
                 team1Wins++;
             } else {
                 team2Wins++;
             }
         }
         String winner = team1Wins >= 2 ? match.getTeam1Players() : match.getTeam2Players();
+        String loser = team1Wins >= 2 ? match.getTeam2Players() : match.getTeam1Players();
         if (match.getTournament() != null){
             tournamentService.nextTurn(winner, match.getTournament());
+        }
+        if(winner != null){
+            List<String> usersWinnersId = userService.getPlayersOfTeam(winner);
+            User userWinner1 = userService.getById(userService.parsePlayerId(usersWinnersId, 0));
+            User userWinner2 = userService.getById(userService.parsePlayerId(usersWinnersId, 1));
+            rankingService.winMatch(userWinner1.getRanking().getId());
+            rankingService.winMatch(userWinner2.getRanking().getId());
+        } else if (loser != null) {
+            List<String> usersLosersId = userService.getPlayersOfTeam(loser);
+            User userLoser1 = userService.getById(userService.parsePlayerId(usersLosersId, 0));
+            User userLoser2 = userService.getById(userService.parsePlayerId(usersLosersId, 1));
+            rankingService.lossMatch(userLoser1.getRanking().getId());
+            rankingService.lossMatch(userLoser2.getRanking().getId());
         }
         return winner;
     }
