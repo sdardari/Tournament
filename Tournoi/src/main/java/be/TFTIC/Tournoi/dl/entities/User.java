@@ -56,6 +56,8 @@ public class User implements UserDetails {
     @JoinColumn(name = "clan_id")
     private Clan clan;
 
+    @OneToMany(mappedBy="user")
+    private List<FriendShip> friendShips;
 
     public User(String username, String firstname, String lastname, String email, String password, UserRole role, Clan clan) {
         this.username = username;
@@ -76,6 +78,7 @@ public class User implements UserDetails {
         this.password = password;
         this.ranking = new Ranking();
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

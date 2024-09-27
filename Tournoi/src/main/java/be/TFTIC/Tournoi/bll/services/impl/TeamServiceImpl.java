@@ -27,16 +27,19 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public Team createTeam(Team team) {
-        return null;
+        return teamRepository.save(team);
     }
 
     @Override
-    public Team updateTeam(Team team) {
-        return null;
+    public void updateTeam(String id, Team team) {
+        Team existingTeam = getTeamById(id);
+        existingTeam.setName(team.getName());
+        teamRepository.save(existingTeam);
     }
 
     @Override
-    public void deleteTeam(Long id) {
-
+    public void deleteTeam(String id) {
+        Team existingTeam = getTeamById(id);
+        teamRepository.delete(existingTeam);
     }
 }

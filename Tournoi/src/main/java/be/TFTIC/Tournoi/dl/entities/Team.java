@@ -9,6 +9,7 @@ import java.util.List;
 @Table(name = "teams")
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class Team {
 
     @Id
@@ -25,7 +26,11 @@ public class Team {
     )
     private List<User> users;
 
-    public Team(){
-        this.users = new ArrayList<>();
+//    public Team(){
+//        this.users = new ArrayList<>();
+//    }
+
+    public Team(String name) {
+        this.name = name;
     }
 }
