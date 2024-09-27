@@ -10,15 +10,16 @@ public interface MatchService {
     // region CRUD Match
     List<Match> getAll();
     Match getById(Long id);
-    Match createMatch(MatchForm matchForm, String team1, String team2);
+//    Match createMatch(MatchForm matchForm);
     void update(Long id, MatchForm matchForm);
     void delete(Long id);
     // endregion
 
     // region Logic Match
-    String determineMatchWinner(Match match);
-    String determinerSetWinner(int scoreTeam1, int scoreTeam2);
+//    String determineMatchWinner(Match match);
+//    String determinerSetWinner(int scoreTeam1, int scoreTeam2);
 
     // endregion
+    Match save(Match match);
 
 }

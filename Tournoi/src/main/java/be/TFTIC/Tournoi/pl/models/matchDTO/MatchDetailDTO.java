@@ -29,10 +29,10 @@ public record MatchDetailDTO(
                 placeName,  // Utilise le nom du lieu
                 tournamentName,
                 match.getScoreTeam1Set1(),
-                match.getScoreTeam1Set2(),
-                match.getScoreTeam1Set3(),
                 match.getScoreTeam2Set1(),
+                match.getScoreTeam1Set2(),
                 match.getScoreTeam2Set2(),
+                match.getScoreTeam1Set3(),
                 match.getScoreTeam2Set3(),
                 match.getDateOfMatch()
         );

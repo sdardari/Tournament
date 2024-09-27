@@ -9,7 +9,7 @@ public interface TeamService {
     Team getTeamById(String id);
     List<Team> getAllTeams();
     Team createTeam(Team team);
-    Team updateTeam(Team team);
-    void deleteTeam(Long id);
+    void updateTeam(String id, Team team);
+    void deleteTeam(String id);
 
 }

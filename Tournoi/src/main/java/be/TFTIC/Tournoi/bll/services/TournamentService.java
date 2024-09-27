@@ -16,4 +16,7 @@ public interface TournamentService {
     void tournamentFinish (Long id);
     void inscription (Long id);
     List<Team> getParticipant(Long id);
+    void nextTurn(String teamId, Tournament tournament);
+    String getWinner(Long id);
+    void winnerTournament(List<String> winner, Tournament tournament);
 }

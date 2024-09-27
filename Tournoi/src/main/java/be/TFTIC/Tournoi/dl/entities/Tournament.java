@@ -35,6 +35,8 @@ public class Tournament {
     @Range(min=0)
     private int nbPlace;
 
+    private String winner;
+
     @ManyToMany
     @JoinTable(
             name = "tournament_team",
