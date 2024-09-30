@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExist;
 import be.TFTIC.Tournoi.bll.services.TournamentService;
 import be.TFTIC.Tournoi.dal.repositories.TeamRepository;
 import be.TFTIC.Tournoi.dal.repositories.TournamentRepository;
@@ -30,7 +31,7 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public Tournament getById(Long id) {
         return tournamentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("The tournament with id " + id + " not found"));
+                .orElseThrow(() -> new DoNotExist("The tournament with id " + id + " not found"));
     }
 // TODO DELETE 
     @Override
