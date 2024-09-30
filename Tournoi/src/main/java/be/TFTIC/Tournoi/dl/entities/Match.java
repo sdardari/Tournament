@@ -2,7 +2,8 @@ package be.TFTIC.Tournoi.dl.entities;
 
 import lombok.*;
 import jakarta.persistence.*;
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
@@ -55,7 +56,7 @@ public class Match {
     @Column(nullable = true)
     private Integer scoreTeam2Set3;
 
-    private LocalDate dateOfMatch;
+    private LocalDateTime dateOfMatch;
     private boolean isPlayed;
 
     public Match(String team1, String team2, Tournament tournament) {

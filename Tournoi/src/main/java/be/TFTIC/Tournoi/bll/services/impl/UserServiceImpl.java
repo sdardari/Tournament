@@ -36,9 +36,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDTO getUserById(Long id) {
+    public User getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Username with this id does not exist"));
-        return UserDTO.fromEntity(user);
+        return user;
     }
 
     @Override
