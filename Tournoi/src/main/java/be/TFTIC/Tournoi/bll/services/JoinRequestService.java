@@ -3,7 +3,7 @@ package be.TFTIC.Tournoi.bll.services;
 import be.TFTIC.Tournoi.dl.entities.Clan;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.pl.models.clan.ClanDTO;
-import be.TFTIC.Tournoi.pl.models.message.MessageDTO;
+import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
 
 public interface JoinRequestService {
 
