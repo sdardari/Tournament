@@ -2,6 +2,7 @@ package be.TFTIC.Tournoi.pl.models.matchDTO;
 import be.TFTIC.Tournoi.bll.services.PlaceService;
 import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.Place;
+import be.TFTIC.Tournoi.dl.entities.Team;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -10,8 +11,6 @@ import java.time.LocalDate;
 
 @Getter @Setter
 public class MatchForm {
-    private String teamId1;
-    private String teamId2;
     private Long placeId;
     private Integer scoreTeam1Set1;
     private Integer scoreTeam2Set1;

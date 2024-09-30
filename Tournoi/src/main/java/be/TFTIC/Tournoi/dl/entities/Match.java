@@ -1,6 +1,5 @@
 package be.TFTIC.Tournoi.dl.entities;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -57,8 +56,16 @@ public class Match {
     private Integer scoreTeam2Set3;
 
     private LocalDate dateOfMatch;
+    private boolean isPlayed;
 
+    public Match(String team1, String team2, Tournament tournament) {
+        this.tournament = tournament;
+        this.team1Players = team1;
+        this.team2Players = team2;
+        this.isPlayed = false;
+    }
 
-    public Match(String teamId1, String teamId2, Long placeId, Integer scoreTeam1Set1, Integer scoreTeam1Set2, Integer scoreTeam1Set3, Integer scoreTeam2Set1, Integer scoreTeam2Set2, Integer scoreTeam2Set3, LocalDate dateOfMatch) {
+    public Match(Place place) {
+        this.place = place;
     }
 }
