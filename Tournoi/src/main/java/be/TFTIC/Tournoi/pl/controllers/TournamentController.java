@@ -45,6 +45,9 @@ public class TournamentController {
 
     @PostMapping
     public ResponseEntity<Void> createTournament(@Valid @RequestBody TournamentForm form){
+        if(form.nbPlace()<4){
+            throw new RuntimeException("there is not enough room in your tournament");
+        }
         Long id = tournamentService.create(form.toEntity());
         UriComponents uriComponents = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -72,5 +75,11 @@ public class TournamentController {
     public ResponseEntity<Void> deleteTournament(@PathVariable long id){
         tournamentService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/winner")
+    public ResponseEntity<String> winnerTournament(@PathVariable Long id){
+        String winner = tournamentService.getWinner(id);
+        return ResponseEntity.ok(winner);
     }
 }
