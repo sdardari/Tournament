@@ -1,59 +1,121 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
-
 import be.TFTIC.Tournoi.bll.services.ChatService;
+import be.TFTIC.Tournoi.dl.entities.Chat;
 import be.TFTIC.Tournoi.dl.entities.User;
-import be.TFTIC.Tournoi.pl.models.message.ChatMessageRequestDT0;
+import be.TFTIC.Tournoi.pl.models.chat.ChatDTO;
+import be.TFTIC.Tournoi.pl.models.message.ChatMessageForm;
 import be.TFTIC.Tournoi.pl.models.message.MessageChatDTO;
+import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import org.springframework.security.core.Authentication;
 
-@Controller
+import java.util.List;
+
+@RestController
+@RequestMapping("/chat")
 @RequiredArgsConstructor
-public class ChatController {
+public class ChatController{
 
-    private ChatService chatService;
+    private final ChatService chatService;
 
-    @MessageMapping("chat.send")
-    public Mono<MessageChatDTO> sendMessage(ChatMessageRequestDT0 request) {
-        return Mono.fromCallable(() -> chatService.sendMessage(
-                request.getChatId(),
-                request.getSenderId(),
-                request.getContent()));
+    @MessageMapping("chat.sendMessage")
+    public Mono<MessageChatDTO> sendMessage(@Valid @Payload ChatMessageForm chatMessageForm, Authentication authentication){
+        Chat chat = chatService.findChatById(chatMessageForm.getChatId());
+        User sender = (User) authentication.getPrincipal();
+        return Mono.just(chatService.sendMessage(chatMessageForm.getChatId(), sender.getId(), chatMessageForm.getContent()));
+
     }
 
-    // Endpoint for getting all messages for a chat
-    @MessageMapping("chat.getMessages")
-    public Flux<MessageChatDTO> getChatMessages(Long chatId) {
-        return Flux.fromIterable(chatService.getChatMessages(chatId));
+    @MessageMapping("chat.subscribe")
+    public Flux<MessageChatDTO> subscribeToChat(@Payload Long chatId, Authentication authentication){
+        User user= (User) authentication.getPrincipal();
+    return chatService.getChatMessagesStream(chatId,user.getId());
     }
 
+    @PostMapping("/createChat")
+    public ResponseEntity<ChatDTO> createChat(
+            @RequestParam Long otherUserId,
+            Authentication authentication){
+        User creator = (User) authentication.getPrincipal();
+        Long creatorUserId= creator.getId();
 
+        ChatDTO createdChat= chatService.createChat(creatorUserId, otherUserId);
+        return  ResponseEntity.ok(createdChat);
+    }
 
-
-
-
-
-
-
-
-    @DeleteMapping("/chat/{chatId}/removeUser/{userId}")
-    public ResponseEntity<String> removeUserFromChat(
+    @PostMapping("/addUserToChat/{chatId}")
+    public ResponseEntity<MessageDTO> addUserToChat(
             @PathVariable Long chatId,
-            @PathVariable Long userId,
+            @RequestParam Long userToAddId,
+            Authentication authentication){
+
+        User currentUser = (User) authentication.getPrincipal();
+
+        if (!chatService.isUserInChat(chatId, currentUser.getId())){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        MessageDTO messageDTO = chatService.addUserToChat(chatId, userToAddId);
+        return  ResponseEntity.ok(messageDTO);
+    }
+
+    @DeleteMapping("/removeUserFromChat/{chatId}")
+    public ResponseEntity<MessageDTO> removeUserFromChat(
+            @PathVariable Long chatId,
+            @RequestParam Long userIdToRemove,
             Authentication authentication) {
 
-        User currentUser = (User) authentication.getPrincipal(); // Récupérer l'utilisateur actuel
-        chatService.removeUserFromChat(chatId, userId, currentUser.getId());
-        return ResponseEntity.ok("User removed from chat successfully.");
+        User currentUser = (User) authentication.getPrincipal();
+        Long currentUserId = currentUser.getId();
+
+        MessageDTO messageDTO= chatService.removeUserFromChat(chatId, currentUserId, userIdToRemove);
+
+        return ResponseEntity.ok(messageDTO);
+
+    }
+
+    @DeleteMapping("/quitChat/{chatId}")
+    public ResponseEntity<MessageDTO> quitChat(
+            @PathVariable Long chatId,
+            Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        MessageDTO messageDTO = chatService.quitChat(chatId, currentUser.getId());
+        return ResponseEntity.ok(messageDTO);
     }
 
 
+    @PutMapping("/renameChat/{chatId}")
+    public ResponseEntity<MessageDTO> renameChat(
+            @PathVariable Long chatId,
+            @RequestParam String newChatName,
+            Authentication authentication) {
+
+        User currentUser = (User) authentication.getPrincipal();
+        Long currentUserId = currentUser.getId();
+
+        MessageDTO messageDTO=chatService.renameChat(chatId, currentUserId, newChatName);
+        return ResponseEntity.ok(messageDTO);
+    }
+
+    @GetMapping("/messages/{chatId}")
+    public ResponseEntity<List<MessageChatDTO>> getChatMessages(
+            @PathVariable Long chatId,
+            Authentication authentication) {
+
+        User user = (User) authentication.getPrincipal();
+        List<MessageChatDTO> messages = chatService.getChatMessages(chatId, user.getId());
+
+        return ResponseEntity.ok(messages);
+    }
 }
+
+
+

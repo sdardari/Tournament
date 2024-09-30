@@ -7,15 +7,16 @@ import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Chat;
 import be.TFTIC.Tournoi.dl.entities.ChatMessage;
 import be.TFTIC.Tournoi.dl.entities.User;
+import be.TFTIC.Tournoi.pl.models.chat.ChatDTO;
 import be.TFTIC.Tournoi.pl.models.message.MessageChatDTO;
+import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Sinks;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,30 +27,61 @@ public class ChatServiceImpl implements ChatService {
     private final UserRepository userRepository;
     private final ChatMessageRepository messageRepository;
 
+    private final Map<Long, Sinks.Many<MessageChatDTO>> chatMessageSinks;
+
+
     @Override
-    public Chat createChat(Long createrUserId, Long otherUserId) {
+    public Chat findChatById(Long chatId) {
+        return  chatRepository.findById(chatId)
+                .orElseThrow(()-> new RuntimeException("Chat not found with ID: "+ chatId));
+    }
 
-        User creator= userRepository.findById(createrUserId)
-                .orElseThrow(()-> new RuntimeException("User not found "+ createrUserId));
+    public User findUserById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(()-> new RuntimeException("User not found: "+ userId));
+    }
 
-        User otherUser= userRepository.findById(otherUserId)
-                .orElseThrow(()-> new RuntimeException("User not found "+ createrUserId));
+    @Override
+    public ChatDTO createChat(Long createrUserId, Long otherUserId) {
+
+        if (createrUserId.equals(otherUserId)) {
+            throw new RuntimeException("You cannot create a chat with yourself.");
+        }
+
+        User creator= findUserById(createrUserId);
+        User otherUser= findUserById(otherUserId);
+        //TODO possibilité de creer plusiers chat entre les meme personne a regler
+
         Chat chat = new Chat();
         chat.setParticipants(Set.of(creator,otherUser));
         chat.setCreator(createrUserId);
         chat.setChatName(creator.getUsername() + " & "+ otherUser.getUsername());
 
-        return chatRepository.save(chat);
+        Chat createdChat = chatRepository.save(chat);
+        //Initialize the sink for real time streaming
+        chatMessageSinks.put(createdChat.getId(),Sinks.many().multicast().directBestEffort());
+
+        return ChatDTO.fromEntity(createdChat);
     }
 
     @Override
-    public void addUserToChat(Long chatId, Long userId) {
-        Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(()->new RuntimeException("Chat not found" + chatId));
-        User user= userRepository.findById(userId)
-                .orElseThrow(()-> new RuntimeException("User not found "+ userId));
+    public boolean isUserInChat(Long chatId, Long userId) {
 
-        chat.getParticipants().add(user);
+        Chat chat= findChatById(chatId);
+        User user= findUserById(userId);
+
+        return chat.getParticipants().contains(user);
+    }
+
+    @Override
+    public MessageDTO addUserToChat(Long chatId, Long userToAddId) {
+
+        Chat chat= findChatById(chatId);
+        User userToAdd= findUserById(userToAddId);
+        if(chat.getParticipants().contains(userToAdd)){
+            return new MessageDTO(userToAdd.getUsername()+" is already member of the chat");
+        }
+        chat.getParticipants().add(userToAdd);
         chatRepository.save(chat);
 
         if(chat.getParticipants().size()>2){
@@ -60,54 +92,78 @@ public class ChatServiceImpl implements ChatService {
             chat.setChatName(chatName.substring(0,chatName.length()-2));
             chatRepository.save(chat);
         }
+
+        Sinks.Many<MessageChatDTO> messageSink = chatMessageSinks.get(chatId);
+        if (messageSink != null) {
+            MessageChatDTO joinMessage = MessageChatDTO.createJoinMessage(chatId, userToAdd.getId(), userToAdd.getUsername());
+            messageSink.tryEmitNext(joinMessage);}
+        return new MessageDTO("User added to chat");
     }
 
     @Override
-    public void removeUserFromChat(Long chatId, Long currentUserId, Long userIdToRemove) {
-        Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(()->new RuntimeException("Chat not found" + chatId));
+    public MessageDTO quitChat(Long chatId, Long userId) {
 
-        User userToRemove = userRepository.findById(userIdToRemove)
-                .orElseThrow(() -> new RuntimeException("User not found " + userIdToRemove));
+        Chat chat= findChatById(chatId);
+        User user= findUserById(userId);
 
-        if(!chat.getCreator().equals(currentUserId)) {
+        return handleUserRemoval(chat, user, " has left the chat");
+    }
+
+    @Override
+    public MessageDTO removeUserFromChat(Long chatId, Long currentUserId, Long userIdToRemove) {
+
+        Chat chat= findChatById(chatId);
+        User userToRemove= findUserById(userIdToRemove);
+
+        if (!chat.getCreator().equals(currentUserId)) {
             throw new RuntimeException("Only the chat creator can remove users from the chat.");
         }
-        if(chat.getCreator().equals(userToRemove)){
-            chat.getParticipants().remove(userToRemove);
-
-            if(!chat.getParticipants().isEmpty()){
-                User newCreator = chat.getParticipants().iterator().next();
-                chat.setCreator(newCreator.getId());
-            }else{
-                chatRepository.delete((chat));
-                return;
-            }
-        }else{
-            chat.getParticipants().remove(userToRemove);
-        }
-            chatRepository.save(chat);
+        return handleUserRemoval(chat, userToRemove,  userToRemove.getUsername()+" ejected by Admin ");
     }
 
+    private MessageDTO handleUserRemoval(Chat chat, User user, String message) {
+
+        /// voir fonction au dessus
+        if (!isUserInChat(chat.getId(), user.getId())){
+            return new MessageDTO("Not member of the chat ");
+        }
+        chat.getParticipants().remove(user);
+
+        if (chat.getCreator().equals(user.getId())) {
+            if (!chat.getParticipants().isEmpty()) {
+                User newCreator = chat.getParticipants().iterator().next();
+                chat.setCreator(newCreator.getId());
+            } else {
+                chatRepository.delete(chat);
+                chatMessageSinks.remove(chat.getId());
+                return new MessageDTO(user.getUsername() + " has left the chat, and the chat has been deleted.");
+            }
+        }
+        chatRepository.save(chat);
+        return new MessageDTO(user.getUsername() + message);
+    }
+
+
     @Override
-    public void renameChat(Long chatId, Long userId, String newChatName) {
-        Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(()-> new RuntimeException("Chat not found"));
+    public MessageDTO renameChat(Long chatId, Long userId, String newChatName) {
+        Chat chat= findChatById(chatId);
 
         if(!chat.getCreator().equals(userId)){
-            throw new RuntimeException("Only the chat creator can rename the chat");
+            return new MessageDTO("Only the chat creator can rename the chat");
+            //TODO changer en exception
+
         }
         chat.setChatName(newChatName);
         chatRepository.save(chat);
+        return new MessageDTO("Chat succesfully renamed");
     }
 
     @Override
     public MessageChatDTO sendMessage(Long chatId, Long senderId, String content) {
-        Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(()->new RuntimeException("Chat not found" + chatId));
+        Chat chat= findChatById(chatId);
 
-        User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new RuntimeException("User not found "+ senderId));
+        User sender= findUserById(senderId);
+
 
         if (!chat.getParticipants().contains(sender)) {
             throw new RuntimeException("L'utilisateur n'est pas un membre de ce chat.");
@@ -121,11 +177,42 @@ public class ChatServiceImpl implements ChatService {
 
         messageRepository.save(chatMessage);
 
+        MessageChatDTO messageChatDTO= MessageChatDTO.fromEntity(chatMessage);
+
+        Sinks.Many<MessageChatDTO> sink = chatMessageSinks.get(chatId);
+        if(sink !=null){
+            sink.tryEmitNext(messageChatDTO);
+        }
+        return messageChatDTO;
+    }
+
+    @Override
+    public List<MessageChatDTO> getChatMessages(Long chatId, Long userId) {
+        Chat chat= findChatById(chatId);
+        User user= findUserById(userId);
+
+        if (!chat.getParticipants().contains(user)) {
+            throw new RuntimeException("L'utilisateur n'est pas un membre de ce chat.");
+        }
+
+        List<ChatMessage> chatMessages= messageRepository.findByChat(chat);
+
+        return chatMessages.stream().map(MessageChatDTO::fromEntity).collect(Collectors.toList());
 
     }
 
     @Override
-    public List<MessageChatDTO> getChatMessages(Long chatId) {
-        return List.of();
+    public Flux<MessageChatDTO> getChatMessagesStream(Long chatId, Long userId) {
+
+        Chat chat= findChatById(chatId);
+        User user= findUserById(userId);
+
+        if (!chat.getParticipants().contains(user)) {
+            throw new RuntimeException("L'utilisateur n'est pas un membre de ce chat.");
+        }
+
+        return chatMessageSinks
+                .computeIfAbsent(chatId, id -> Sinks.many().multicast().directBestEffort())
+                .asFlux();
     }
 }

@@ -32,8 +32,7 @@ public class ClanServiceImpl implements ClanService{
 
     @Override
     public ClanDTO createClan(ClanFormCreate cLanFormCreate, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new RuntimeException("User not found"));
+        User user = getUserById(userId);
 
         Clan clan = cLanFormCreate.toEntity();
         clan.setName(cLanFormCreate.getName());
@@ -54,7 +53,7 @@ public class ClanServiceImpl implements ClanService{
 
     public User getUserById(long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Clan not found"));
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public Clan getById(long id){
