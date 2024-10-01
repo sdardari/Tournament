@@ -3,6 +3,7 @@ package be.TFTIC.Tournoi.bll.services.impl;
 import be.TFTIC.Tournoi.bll.exception.authority.NotEnoughAuthorityException;
 import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.exception.member.NotMemberException;
+import be.TFTIC.Tournoi.bll.exception.request.BadRequestException;
 import be.TFTIC.Tournoi.bll.services.ClanService;
 import be.TFTIC.Tournoi.bll.services.JoinRequestService;
 import be.TFTIC.Tournoi.dal.repositories.ClanRepository;
@@ -120,7 +121,7 @@ public class ClanServiceImpl implements ClanService{
                 if (newPresidentId != null) {
                     clan.getRoles().put(newPresidentId, ClanRole.PRESIDENT);
                 } else {
-                    throw new IllegalArgumentException("Promote first a president or vice-president to leave a clan.");
+                    throw new BadRequestException("Promote first a president or vice-president to leave a clan.");
                 }
             }
             clan.getMembers().removeIf(member -> member.getId().equals(userId));

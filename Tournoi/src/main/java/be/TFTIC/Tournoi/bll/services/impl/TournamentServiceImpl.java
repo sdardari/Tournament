@@ -1,7 +1,7 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.request.BadRequestException;
 import be.TFTIC.Tournoi.bll.services.MatchService;
-import be.TFTIC.Tournoi.bll.services.TeamService;
 import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.TournamentService;
 import be.TFTIC.Tournoi.dal.repositories.TeamRepository;
@@ -27,8 +27,7 @@ public class TournamentServiceImpl implements TournamentService {
     private final TournamentRepository tournamentRepository;
     private final TeamRepository teamRepository;
     private final MatchService matchService;
-    private final TeamService teamService;
-    private List<String> nextTurnTeam = new ArrayList<>();
+    private final List<String> nextTurnTeam = new ArrayList<>();
     private Integer nbMatch = 0;
 
     @Override
@@ -45,13 +44,13 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public Long create(Tournament tournament) {
         if(tournament.getNbPlace()<4){
-            throw new RuntimeException("Pas assez de place dans le tournoi");
+            throw new BadRequestException("Pas assez de place dans le tournoi");
         }
         if(tournament.getNbPlace()>32){
-            throw new RuntimeException("Pas assez de place dans le tournoi");
+            throw new BadRequestException("Trop de place dans le tournoi");
         }
         if(tournament.getNbPlace()%4 != 0){
-            throw new RuntimeException("il faut pouvoir créer un nombre de place divisible par 4!");
+            throw new BadRequestException("il faut pouvoir créer un nombre de place divisible par 4!");
         }
         tournament.setDateDebut(LocalDateTime.now());
         Tournament savetournament = tournamentRepository.save(tournament);
@@ -94,16 +93,15 @@ public class TournamentServiceImpl implements TournamentService {
             userTeam = new Team();
             userTeam.setTeamId(Long.toString(user.getId()));
             userTeam.setName(user.getUsername().substring(0,2).toUpperCase()+ user.getId());
-            //userTeam.setUsers(Collections.singletonList(user));
             teamRepository.save(userTeam);
         }
 
         if(participants.size() > tournament.getNbPlace() - 1){
-            throw new RuntimeException("Tournament full");
+            throw new BadRequestException("Tournament full");
         }
         for(Team team : participants){
             if(team.getTeamId().equals(userTeam.getTeamId())){
-                throw new RuntimeException("User alrady register");
+                throw new BadRequestException("User alrady register");
             }
         }
 
@@ -117,7 +115,7 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public List<Team> getParticipant(Long tournamentId){
         Tournament tournament = tournamentRepository.findTeamByTournament(tournamentId)
-                .orElseThrow(() -> new RuntimeException("Tournament not found"));
+                .orElseThrow(() -> new DoNotExistException("Tournament not found"));
         return tournament.getParticipant();
     }
 
@@ -133,7 +131,7 @@ public class TournamentServiceImpl implements TournamentService {
     public void startTournament(List<Team> participant, Long id){
         List<String> teams = createTeam(participant);
         Tournament tournament = tournamentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("The tournament with id " + id + " not found"));
+                .orElseThrow(() -> new DoNotExistException("The tournament with id " + id + " not found"));
         createMatch(teams, tournament);
     }
 
@@ -163,7 +161,6 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public String getWinner(Long id){
         Tournament tournament = getById(id);
-        String winner = tournament.getWinner();
-        return winner;
+        return tournament.getWinner();
     }
 }

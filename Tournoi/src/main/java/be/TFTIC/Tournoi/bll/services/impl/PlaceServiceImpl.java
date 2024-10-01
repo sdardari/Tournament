@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.PlaceService;
 import be.TFTIC.Tournoi.dal.repositories.PlaceRepository;
 import be.TFTIC.Tournoi.dl.entities.Place;
@@ -17,7 +18,7 @@ public class PlaceServiceImpl implements PlaceService {
     @Override
     public Place getPlaceById(Long id) {
         return placeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Place not found"));
+                .orElseThrow(() -> new DoNotExistException("Place not found"));
     }
 
     @Override

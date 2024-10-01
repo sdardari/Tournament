@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.JoinRequestService;
 import be.TFTIC.Tournoi.dal.repositories.ClanRepository;
 import be.TFTIC.Tournoi.dal.repositories.JoinRequestRepository;
@@ -26,12 +27,12 @@ public class JoinRequestImpl implements JoinRequestService {
 
     public User getUserById(long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Clan not found"));
+                .orElseThrow(() -> new DoNotExistException("Clan not found"));
     }
 
     public Clan getById(long id){
         return clanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Clan not found"));
+                .orElseThrow(() -> new DoNotExistException("Clan not found"));
     }
 
     @Override
@@ -83,14 +84,13 @@ public class JoinRequestImpl implements JoinRequestService {
         Clan clan = getById(clanId);
 
         ClanRole currentUserRole = clan.getRoles().get(currentUser.getId());
-        if (currentUserRole == null ||
-                !(currentUserRole == ClanRole.PRESIDENT || currentUserRole == ClanRole.VICE_PRESIDENT)) {
+        if (!(currentUserRole == ClanRole.PRESIDENT || currentUserRole == ClanRole.VICE_PRESIDENT)) {
             return new MessageDTO("Only Presidents or Vice Presidents can handle join requests.");
         }
         User userToChange= getUserById(userIdToChange);
 
         JoinRequest joinRequest= joinRequestRepository.findByUserAndClanAndStatus(userToChange,clan,RequestStatus.PENDING)
-                .orElseThrow(()-> new RuntimeException("Join request not found "));
+                .orElseThrow(()-> new DoNotExistException("Join request not found "));
 
         if (accept) {
             clan.getRoles().put(userToChange.getId(), ClanRole.MEMBER);
