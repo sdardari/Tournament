@@ -1,4 +1,8 @@
 package be.TFTIC.Tournoi.bll.services.impl;
+
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
+import be.TFTIC.Tournoi.bll.services.FriendShipService;
+import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.service.FriendShipService;
 import be.TFTIC.Tournoi.bll.services.service.UserService;
@@ -13,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,8 +47,8 @@ public class FriendShipServiceImpl implements FriendShipService {
         if(user.getId().equals(friendId)){
             throw new IllegalArgumentException("impossible de devenir ami avec soi même!");
         }
-        Optional<FriendShip> existingFriendShip = friendShipRepository.findByUsers(user.getId(), friendId);
-        if(existingFriendShip.isPresent()){
+        boolean existingFriendShip = friendShipRepository.findByUsers(user.getId(), friendId);
+        if(existingFriendShip){
             throw new IllegalStateException("L'amitié existe déja !");
         }
         LocalDateTime createDate = LocalDateTime.now();
@@ -63,5 +66,8 @@ public class FriendShipServiceImpl implements FriendShipService {
         friendShipRepository.delete(friendShip);
     }
 
-
+    @Override
+    public boolean areFriend(Long userId, Long friendId) {
+        return friendShipRepository.findByUsers(userId, friendId);
+    }
 }
