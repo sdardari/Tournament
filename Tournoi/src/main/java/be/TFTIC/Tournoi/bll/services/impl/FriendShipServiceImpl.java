@@ -5,8 +5,6 @@ import be.TFTIC.Tournoi.bll.services.service.UserService;
 import be.TFTIC.Tournoi.dal.repositories.FriendShipRepository;
 import be.TFTIC.Tournoi.dl.entities.FriendShip;
 import be.TFTIC.Tournoi.dl.entities.User;
-import be.TFTIC.Tournoi.pl.models.User.UserDTO;
-import be.TFTIC.Tournoi.bll.services.service.FriendShipService;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipDTO;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipForm;
 import lombok.RequiredArgsConstructor;

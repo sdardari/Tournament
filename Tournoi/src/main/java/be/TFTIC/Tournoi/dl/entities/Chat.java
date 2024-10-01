@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@AllArgsConstructor@NoArgsConstructor
-@Getter@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Chat {
 
     @Id

@@ -6,10 +6,10 @@ import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.exception.member.AlreadyMemberException;
 import be.TFTIC.Tournoi.bll.exception.member.NotMemberException;
 import be.TFTIC.Tournoi.bll.services.service.ChatService;
+import be.TFTIC.Tournoi.bll.services.service.FriendShipService;
 import be.TFTIC.Tournoi.bll.services.service.UserService;
 import be.TFTIC.Tournoi.dal.repositories.ChatRepository;
 import be.TFTIC.Tournoi.dal.repositories.ChatMessageRepository;
-import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Chat;
 import be.TFTIC.Tournoi.dl.entities.ChatMessage;
 import be.TFTIC.Tournoi.dl.entities.User;
@@ -30,8 +30,9 @@ import java.util.stream.Collectors;
 public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
-    private final UserRepository userRepository;
-//    private final UserService userRepository;
+
+    private final UserService userService;
+    private final FriendShipService friendShipService;
     private final ChatMessageRepository messageRepository;
 
     private final Map<Long, Sinks.Many<MessageChatDTO>> chatMessageSinks;
@@ -39,49 +40,68 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public Chat findChatById(Long chatId) {
-        return  chatRepository.findById(chatId)
-                .orElseThrow(()-> new DoNotExistException("Chat with ID "+ chatId +" does not"));
+        return chatRepository.findById(chatId)
+                .orElseThrow(() -> new DoNotExistException("Chat with ID " + chatId + " does not"));
     }
 
-    public User findUserById(Long userId){
-        return userRepository.findById(userId)
-                .orElseThrow(()-> new DoNotExistException("User with ID "+ userId+" does not exist "));
+    public User findUserById(Long userId) {
+        return userService.getUserById(userId);
     }
 
-    public void Ispresent (Chat chat, User user){
-        if (!isUserInChat(chat.getId(), user.getId())){
-            throw  new NotMemberException();
+    public void Ispresent(Chat chat, User user) {
+        if (!isUserInChat(chat.getId(), user.getId())) {
+            throw new NotMemberException();
         }
     }
 
     @Override
     public ChatDTO createChat(Long createrUserId, Long otherUserId) {
 
+
+
+
         if (createrUserId.equals(otherUserId)) {
             throw new NoPossibleException("You cannot create a chat with yourself.");
         }
 
-        User creator= findUserById(createrUserId);
-        User otherUser= findUserById(otherUserId);
+        User creator = findUserById(createrUserId);
+        User otherUser = findUserById(otherUserId);
         //TODO possibilité de creer plusiers chat entre les meme personne a regler
 
         Chat chat = new Chat();
-        chat.setParticipants(Set.of(creator,otherUser));
+        chat.setParticipants(Set.of(creator, otherUser));
         chat.setCreator(createrUserId);
-        chat.setChatName(creator.getUsername() + " & "+ otherUser.getUsername());
+        chat.setChatName(creator.getUsername() + " & " + otherUser.getUsername());
 
         Chat createdChat = chatRepository.save(chat);
         //Initialize the sink for real time streaming
-        chatMessageSinks.put(createdChat.getId(),Sinks.many().multicast().directBestEffort());
+        chatMessageSinks.put(createdChat.getId(), Sinks.many().multicast().directBestEffort());
 
         return ChatDTO.fromEntity(createdChat);
     }
 
     @Override
+    public ChatDTO createClanChat(Long creatorId, Set<Long> membersIds, String chatName){
+
+        Set<User> members =membersIds.stream()
+                .map(userService::getUserById)
+                .collect(Collectors.toSet());
+
+        Chat chat = new Chat();
+        chat.setChatName(chatName);
+        chat.setCreator(creatorId);
+        chat.setParticipants(members);
+
+        Chat createdChat = chatRepository.save(chat);
+        chatMessageSinks.put(createdChat.getId(), Sinks.many().multicast().directBestEffort());
+
+        return ChatDTO.fromEntity(createdChat);
+    }
+    @Override
     public boolean isUserInChat(Long chatId, Long userId) {
 
-        Chat chat= findChatById(chatId);
-        User user= findUserById(userId);
+        Chat chat = findChatById(chatId);
+        User user = findUserById(userId);
 
         return chat.getParticipants().contains(user);
     }
@@ -89,35 +109,36 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public MessageDTO addUserToChat(Long chatId, Long userToAddId) {
 
-        Chat chat= findChatById(chatId);
-        User userToAdd= findUserById(userToAddId);
-        if(chat.getParticipants().contains(userToAdd)){
-            throw new AlreadyMemberException(userToAdd.getUsername()+" is already member of the chat");
+        Chat chat = findChatById(chatId);
+        User userToAdd = findUserById(userToAddId);
+        if (chat.getParticipants().contains(userToAdd)) {
+            throw new AlreadyMemberException(userToAdd.getUsername() + " is already member of the chat");
         }
         chat.getParticipants().add(userToAdd);
         chatRepository.save(chat);
 
-        if(chat.getParticipants().size()>2){
+        if (chat.getParticipants().size() > 2) {
             StringBuilder chatName = new StringBuilder();
-            for( User participant : chat.getParticipants()){
+            for (User participant : chat.getParticipants()) {
                 chatName.append(participant.getUsername()).append(", ");
             }
-            chat.setChatName(chatName.substring(0,chatName.length()-2));
+            chat.setChatName(chatName.substring(0, chatName.length() - 2));
             chatRepository.save(chat);
         }
 
         Sinks.Many<MessageChatDTO> messageSink = chatMessageSinks.get(chatId);
         if (messageSink != null) {
             MessageChatDTO joinMessage = MessageChatDTO.createJoinMessage(chatId, userToAdd.getId(), userToAdd.getUsername());
-            messageSink.tryEmitNext(joinMessage);}
+            messageSink.tryEmitNext(joinMessage);
+        }
         return new MessageDTO("User added to chat");
     }
 
     @Override
     public MessageDTO quitChat(Long chatId, Long userId) {
 
-        Chat chat= findChatById(chatId);
-        User user= findUserById(userId);
+        Chat chat = findChatById(chatId);
+        User user = findUserById(userId);
 
         return handleUserRemoval(chat, user, " has left the chat");
     }
@@ -125,13 +146,13 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public MessageDTO removeUserFromChat(Long chatId, Long currentUserId, Long userIdToRemove) {
 
-        Chat chat= findChatById(chatId);
-        User userToRemove= findUserById(userIdToRemove);
+        Chat chat = findChatById(chatId);
+        User userToRemove = findUserById(userIdToRemove);
 
         if (!chat.getCreator().equals(currentUserId)) {
             throw new NotEnoughAuthorityException("Only the chat creator can remove users from the chat.");
         }
-        return handleUserRemoval(chat, userToRemove,  userToRemove.getUsername()+" ejected by Admin ");
+        return handleUserRemoval(chat, userToRemove, userToRemove.getUsername() + " ejected by Admin ");
     }
 
     private MessageDTO handleUserRemoval(Chat chat, User user, String message) {
@@ -156,10 +177,10 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public MessageDTO renameChat(Long chatId, Long userId, String newChatName) {
-        Chat chat= findChatById(chatId);
+        Chat chat = findChatById(chatId);
 
-        if(!chat.getCreator().equals(userId)){
-            throw  new NotEnoughAuthorityException("Only the chat creator can rename the chat");
+        if (!chat.getCreator().equals(userId)) {
+            throw new NotEnoughAuthorityException("Only the chat creator can rename the chat");
         }
         chat.setChatName(newChatName);
         chatRepository.save(chat);
@@ -168,9 +189,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public MessageChatDTO sendMessage(Long chatId, Long senderId, String content) {
-        Chat chat= findChatById(chatId);
+        Chat chat = findChatById(chatId);
 
-        User sender= findUserById(senderId);
+        User sender = findUserById(senderId);
         Ispresent(chat, sender);
 
 
@@ -182,10 +203,10 @@ public class ChatServiceImpl implements ChatService {
 
         messageRepository.save(chatMessage);
 
-        MessageChatDTO messageChatDTO= MessageChatDTO.fromEntity(chatMessage);
+        MessageChatDTO messageChatDTO = MessageChatDTO.fromEntity(chatMessage);
 
         Sinks.Many<MessageChatDTO> sink = chatMessageSinks.get(chatId);
-        if(sink !=null){
+        if (sink != null) {
             sink.tryEmitNext(messageChatDTO);
         }
         return messageChatDTO;
@@ -193,12 +214,12 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<MessageChatDTO> getChatMessages(Long chatId, Long userId) {
-        Chat chat= findChatById(chatId);
-        User user= findUserById(userId);
+        Chat chat = findChatById(chatId);
+        User user = findUserById(userId);
 
         Ispresent(chat, user);
 
-        List<ChatMessage> chatMessages= messageRepository.findByChat(chat);
+        List<ChatMessage> chatMessages = messageRepository.findByChat(chat);
 
         return chatMessages.stream().map(MessageChatDTO::fromEntity).collect(Collectors.toList());
     }
@@ -206,8 +227,8 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public Flux<MessageChatDTO> getChatMessagesStream(Long chatId, Long userId) {
 
-        Chat chat= findChatById(chatId);
-        User user= findUserById(userId);
+        Chat chat = findChatById(chatId);
+        User user = findUserById(userId);
 
         if (!chat.getParticipants().contains(user)) {
             throw new NotMemberException();
