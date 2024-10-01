@@ -33,7 +33,8 @@ public class FriendShipController {
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<FriendShipDTO> deleteFriend(@PathVariable Long id) {
-        return ResponseEntity.ok(friendShipService.delete(id));
+    public ResponseEntity<Void> deleteFriend(@PathVariable Long id) {
+        friendShipService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

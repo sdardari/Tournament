@@ -59,9 +59,11 @@ public class FriendShipServiceImpl implements FriendShipService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         FriendShip friendShip = friendShipRepository.findById(id)
                 .orElseThrow(() -> new DoNotExist("friendship do not exist"));
-        if(user.getId().equals(friendShip.getUser().getId()) || user.getId().equals(friendShip.getFriend().getId())){
+        if(!user.getId().equals(friendShip.getUser().getId()) && !user.getId().equals(friendShip.getFriend().getId())){
             throw new RuntimeException("Tu ne peux pas supprimé une amitié qui n'est pas a  toi");
         }
         friendShipRepository.delete(friendShip);
     }
+
+
 }
