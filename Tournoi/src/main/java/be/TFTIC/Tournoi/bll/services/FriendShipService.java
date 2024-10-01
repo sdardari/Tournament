@@ -1,7 +1,5 @@
 package be.TFTIC.Tournoi.bll.services;
 
-import be.TFTIC.Tournoi.dl.entities.FriendShip;
-import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipDTO;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipForm;
 
@@ -13,6 +11,6 @@ public interface FriendShipService {
     FriendShipDTO getOne(Long id);
     FriendShipDTO addOne(FriendShipForm friendShipForm, Long friendId);
     void delete(Long id);
-
+    boolean areFriend(Long userId, Long friendId);
 
 }

@@ -1,12 +1,11 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.exception.exist.DoNotExist;
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.FriendShipService;
 import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dal.repositories.FriendShipRepository;
 import be.TFTIC.Tournoi.dl.entities.FriendShip;
 import be.TFTIC.Tournoi.dl.entities.User;
-import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipDTO;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipForm;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +33,7 @@ public class FriendShipServiceImpl implements FriendShipService {
     @Override
     public FriendShipDTO getOne(Long id) {
         FriendShip friendShip = friendShipRepository.findById(id)
-                .orElseThrow(() -> new DoNotExist("FriendShip with id not found"));
+                .orElseThrow(() -> new DoNotExistException("FriendShip with id not found"));
         return FriendShipDTO.fromEntity(friendShip);
     }
 
@@ -46,8 +44,8 @@ public class FriendShipServiceImpl implements FriendShipService {
         if(user.getId().equals(friendId)){
             throw new IllegalArgumentException("impossible de devenir ami avec soi même!");
         }
-        Optional<FriendShip> existingFriendShip = friendShipRepository.findByUsers(user.getId(), friendId);
-        if(existingFriendShip.isPresent()){
+        boolean existingFriendShip = friendShipRepository.findByUsers(user.getId(), friendId);
+        if(existingFriendShip){
             throw new IllegalStateException("L'amitié existe déja !");
         }
         LocalDateTime createDate = LocalDateTime.now();
@@ -58,12 +56,15 @@ public class FriendShipServiceImpl implements FriendShipService {
     public void delete(Long id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         FriendShip friendShip = friendShipRepository.findById(id)
-                .orElseThrow(() -> new DoNotExist("friendship do not exist"));
+                .orElseThrow(() -> new DoNotExistException("friendship do not exist"));
         if(!user.getId().equals(friendShip.getUser().getId()) && !user.getId().equals(friendShip.getFriend().getId())){
             throw new RuntimeException("Tu ne peux pas supprimé une amitié qui n'est pas a  toi");
         }
         friendShipRepository.delete(friendShip);
     }
 
-
+    @Override
+    public boolean areFriend(Long userId, Long friendId) {
+        return friendShipRepository.findByUsers(userId, friendId);
+    }
 }
