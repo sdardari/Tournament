@@ -1,6 +1,6 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
-import be.TFTIC.Tournoi.bll.services.service.ChatService;
+import be.TFTIC.Tournoi.bll.services.ChatService;
 import be.TFTIC.Tournoi.dl.entities.Chat;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.pl.models.chat.ChatDTO;

@@ -1,9 +1,8 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
-import be.TFTIC.Tournoi.bll.services.service.FriendShipService;
+import be.TFTIC.Tournoi.bll.services.FriendShipService;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipDTO;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipForm;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

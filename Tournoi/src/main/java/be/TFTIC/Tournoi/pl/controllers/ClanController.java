@@ -1,9 +1,9 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
 
-import be.TFTIC.Tournoi.bll.services.service.ClanService;
-import be.TFTIC.Tournoi.bll.services.service.JoinRequestService;
-import be.TFTIC.Tournoi.bll.services.service.UserService;
+import be.TFTIC.Tournoi.bll.services.ClanService;
+import be.TFTIC.Tournoi.bll.services.JoinRequestService;
+import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;

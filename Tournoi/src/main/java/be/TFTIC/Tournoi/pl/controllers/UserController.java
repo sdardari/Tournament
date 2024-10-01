@@ -1,7 +1,7 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
 
-import be.TFTIC.Tournoi.bll.services.service.UserService;
+import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.User.UserForm;
