@@ -1,4 +1,4 @@
-package be.TFTIC.Tournoi.bll.services;
+package be.TFTIC.Tournoi.bll.services.service;
 
 import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.User;

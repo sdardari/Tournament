@@ -1,9 +1,9 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.services.MatchService;
-import be.TFTIC.Tournoi.bll.services.TeamService;
+import be.TFTIC.Tournoi.bll.services.service.MatchService;
+import be.TFTIC.Tournoi.bll.services.service.TeamService;
 import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
-import be.TFTIC.Tournoi.bll.services.TournamentService;
+import be.TFTIC.Tournoi.bll.services.service.TournamentService;
 import be.TFTIC.Tournoi.dal.repositories.TeamRepository;
 import be.TFTIC.Tournoi.dal.repositories.TournamentRepository;
 import be.TFTIC.Tournoi.dl.entities.Match;

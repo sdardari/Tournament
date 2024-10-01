@@ -1,15 +1,12 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.services.FriendShipService;
-import be.TFTIC.Tournoi.dal.repositories.FriendShipRepository;
-import be.TFTIC.Tournoi.dl.entities.FriendShip;
+import be.TFTIC.Tournoi.bll.services.service.FriendShipService;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipDTO;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

@@ -1,8 +1,8 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
-import be.TFTIC.Tournoi.bll.services.MatchFactory;
-import be.TFTIC.Tournoi.bll.services.MatchService;
-import be.TFTIC.Tournoi.bll.services.PlaceService;
+import be.TFTIC.Tournoi.bll.services.service.MatchFactory;
+import be.TFTIC.Tournoi.bll.services.service.MatchService;
+import be.TFTIC.Tournoi.bll.services.service.PlaceService;
 import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.pl.models.matchDTO.MatchDetailDTO;
 import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;

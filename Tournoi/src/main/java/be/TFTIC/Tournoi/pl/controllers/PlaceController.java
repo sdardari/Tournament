@@ -1,6 +1,6 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
-import be.TFTIC.Tournoi.bll.services.PlaceService;
+import be.TFTIC.Tournoi.bll.services.service.PlaceService;
 import be.TFTIC.Tournoi.dl.entities.Place;
 import be.TFTIC.Tournoi.pl.models.placeDTO.PlaceDetailDTO;
 import be.TFTIC.Tournoi.pl.models.placeDTO.PlaceForm;

@@ -1,12 +1,11 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
 
-import be.TFTIC.Tournoi.bll.services.TeamService;
-import be.TFTIC.Tournoi.bll.services.UserService;
+import be.TFTIC.Tournoi.bll.services.service.TeamService;
+import be.TFTIC.Tournoi.bll.services.service.UserService;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Team;
 import be.TFTIC.Tournoi.dl.entities.User;
-import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.team.TeamDTO;
 import be.TFTIC.Tournoi.pl.models.team.TeamForm;
 import be.TFTIC.Tournoi.pl.models.team.TeamFormUpdate;
@@ -17,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor

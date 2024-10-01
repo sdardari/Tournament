@@ -1,4 +1,4 @@
-package be.TFTIC.Tournoi.bll.services;
+package be.TFTIC.Tournoi.bll.services.service;
 
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipDTO;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipForm;

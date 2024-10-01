@@ -1,6 +1,6 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
-import be.TFTIC.Tournoi.bll.services.TournamentService;
+import be.TFTIC.Tournoi.bll.services.service.TournamentService;
 
 import be.TFTIC.Tournoi.pl.models.team.TeamDTO;
 import be.TFTIC.Tournoi.pl.models.tournament.TournamentDTO;

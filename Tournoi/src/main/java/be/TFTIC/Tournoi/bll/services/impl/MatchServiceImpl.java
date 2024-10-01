@@ -1,10 +1,11 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.services.*;
+import be.TFTIC.Tournoi.bll.services.service.MatchService;
+import be.TFTIC.Tournoi.bll.services.service.PlaceService;
+import be.TFTIC.Tournoi.bll.services.service.UserService;
 import be.TFTIC.Tournoi.dal.repositories.MatchRepository;
 
 import be.TFTIC.Tournoi.dl.entities.Match;
-import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

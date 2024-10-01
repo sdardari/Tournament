@@ -1,6 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.services.TeamService;
+import be.TFTIC.Tournoi.bll.services.service.TeamService;
 import be.TFTIC.Tournoi.dal.repositories.TeamRepository;
 import be.TFTIC.Tournoi.dl.entities.Team;
 import lombok.RequiredArgsConstructor;

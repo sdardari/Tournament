@@ -1,6 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.services.PlaceService;
+import be.TFTIC.Tournoi.bll.services.service.PlaceService;
 import be.TFTIC.Tournoi.dal.repositories.PlaceRepository;
 import be.TFTIC.Tournoi.dl.entities.Place;
 import lombok.RequiredArgsConstructor;

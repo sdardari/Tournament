@@ -5,7 +5,8 @@ import be.TFTIC.Tournoi.bll.exception.authority.NotEnoughAuthorityException;
 import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.exception.member.AlreadyMemberException;
 import be.TFTIC.Tournoi.bll.exception.member.NotMemberException;
-import be.TFTIC.Tournoi.bll.services.ChatService;
+import be.TFTIC.Tournoi.bll.services.service.ChatService;
+import be.TFTIC.Tournoi.bll.services.service.UserService;
 import be.TFTIC.Tournoi.dal.repositories.ChatRepository;
 import be.TFTIC.Tournoi.dal.repositories.ChatMessageRepository;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
@@ -30,6 +31,7 @@ public class ChatServiceImpl implements ChatService {
 
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
+//    private final UserService userRepository;
     private final ChatMessageRepository messageRepository;
 
     private final Map<Long, Sinks.Many<MessageChatDTO>> chatMessageSinks;

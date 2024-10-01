@@ -1,6 +1,6 @@
 package be.TFTIC.Tournoi.pl.controllers;
 
-import be.TFTIC.Tournoi.bll.services.FriendShipService;
+import be.TFTIC.Tournoi.bll.services.service.FriendShipService;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipDTO;
 import be.TFTIC.Tournoi.pl.models.friendship.FriendShipForm;
 import lombok.RequiredArgsConstructor;
