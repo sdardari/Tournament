@@ -5,7 +5,7 @@ import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.User.UserForm;
-import be.TFTIC.Tournoi.pl.models.authDTO.UserRegisterForm;
+import be.TFTIC.Tournoi.pl.models.auth.UserRegisterForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

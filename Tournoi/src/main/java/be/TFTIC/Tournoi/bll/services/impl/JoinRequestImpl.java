@@ -10,7 +10,7 @@ import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.dl.enums.RequestStatus;
 import be.TFTIC.Tournoi.pl.models.clan.ClanDTO;
-import be.TFTIC.Tournoi.pl.models.message.MessageDTO;
+import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

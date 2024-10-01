@@ -1,4 +1,4 @@
-package be.TFTIC.Tournoi.pl.models.authDTO;
+package be.TFTIC.Tournoi.pl.models.auth;
 
 public record UserLoginForm (
         String username,
