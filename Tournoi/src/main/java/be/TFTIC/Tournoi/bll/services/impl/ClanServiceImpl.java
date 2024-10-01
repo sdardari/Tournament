@@ -3,14 +3,11 @@ package be.TFTIC.Tournoi.bll.services.impl;
 import be.TFTIC.Tournoi.bll.exception.authority.NotEnoughAuthorityException;
 import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.exception.member.NotMemberException;
-import be.TFTIC.Tournoi.bll.services.service.ChatService;
-import be.TFTIC.Tournoi.bll.services.service.ClanService;
-import be.TFTIC.Tournoi.bll.services.service.JoinRequestService;
-import be.TFTIC.Tournoi.bll.services.service.UserService;
+import be.TFTIC.Tournoi.bll.services.ChatService;
+import be.TFTIC.Tournoi.bll.services.ClanService;
+import be.TFTIC.Tournoi.bll.services.JoinRequestService;
+import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dal.repositories.ClanRepository;
-import be.TFTIC.Tournoi.dal.repositories.JoinRequestRepository;
-import be.TFTIC.Tournoi.dal.repositories.UserRepository;
-import be.TFTIC.Tournoi.dl.entities.Chat;
 import be.TFTIC.Tournoi.dl.entities.Clan;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
@@ -21,7 +18,7 @@ import be.TFTIC.Tournoi.pl.models.clan.*;
 import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import be.TFTIC.Tournoi.il.utils.JwtUtils;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +50,7 @@ public class ClanServiceImpl implements ClanService{
 
         Set<Long> membersIds =clan.getMembers().stream()
                 .map(User::getId).collect(Collectors.toSet());
-        String chatName= clan.getName() + "Clan chat";
+        String chatName= clan.getName() + " Clan chat";
         ChatDTO clanChat = chatService.createClanChat(userId, membersIds, chatName);
 
         return ClanDTO.fromEntity(clan, "clan created successfully with chat");

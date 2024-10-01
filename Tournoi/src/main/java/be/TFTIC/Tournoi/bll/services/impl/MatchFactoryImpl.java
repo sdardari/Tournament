@@ -1,8 +1,8 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.services.service.MatchFactory;
-import be.TFTIC.Tournoi.bll.services.service.MatchService;
-import be.TFTIC.Tournoi.bll.services.service.TournamentService;
+import be.TFTIC.Tournoi.bll.services.MatchFactory;
+import be.TFTIC.Tournoi.bll.services.MatchService;
+import be.TFTIC.Tournoi.bll.services.TournamentService;
 import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.Team;
 import be.TFTIC.Tournoi.dl.entities.Tournament;

@@ -5,9 +5,9 @@ import be.TFTIC.Tournoi.bll.exception.authority.NotEnoughAuthorityException;
 import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.exception.member.AlreadyMemberException;
 import be.TFTIC.Tournoi.bll.exception.member.NotMemberException;
-import be.TFTIC.Tournoi.bll.services.service.ChatService;
-import be.TFTIC.Tournoi.bll.services.service.FriendShipService;
-import be.TFTIC.Tournoi.bll.services.service.UserService;
+import be.TFTIC.Tournoi.bll.services.ChatService;
+import be.TFTIC.Tournoi.bll.services.FriendShipService;
+import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dal.repositories.ChatRepository;
 import be.TFTIC.Tournoi.dal.repositories.ChatMessageRepository;
 import be.TFTIC.Tournoi.dl.entities.Chat;
@@ -57,7 +57,9 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public ChatDTO createChat(Long createrUserId, Long otherUserId) {
 
-
+        if(!friendShipService.areFriend(createrUserId,otherUserId)){
+            throw new DoNotExistException("user is not friend with other user");
+        }
 
 
         if (createrUserId.equals(otherUserId)) {

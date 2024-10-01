@@ -1,6 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.services.service.JoinRequestService;
+import be.TFTIC.Tournoi.bll.services.JoinRequestService;
 import be.TFTIC.Tournoi.dal.repositories.ClanRepository;
 import be.TFTIC.Tournoi.dal.repositories.JoinRequestRepository;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
