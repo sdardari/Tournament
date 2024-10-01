@@ -13,23 +13,20 @@ public interface UserService {
 
 
     UserDTO createUser(UserRegisterForm userForm);
+
     User getUserById(Long id);
+
     List<UserDTO> getAllUsers();
+
     UserDTO updateUser(Long id, UserRegisterForm userForm);
+
     void deleteUser(Long id);
-    UserRole getUserRole (Long id);
+
+    UserRole getUserRole(Long id);
+
     List<UserDTO> findByCriteria(UserForm form);
 
-
     List<User> fromStringToUser(Match match);
-
-
-
-
-
-
-
-
-
+    boolean existsByUsername(String username);
 
 }

@@ -131,6 +131,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException(
                 sb.append("User ").append(id).append(" not found.").toString()));
     }
+    public boolean existsByUsername(String username){
+        return userRepository.existsByUsername(username);
+    }
 
     //endregion
 }
