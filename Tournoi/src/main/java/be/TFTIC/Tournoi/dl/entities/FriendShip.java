@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.dl.entities;
 
+import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,5 +31,10 @@ public class FriendShip {
     private User friend;
 
 
+    public FriendShip(LocalDateTime createDate, User user, User friend) {
+        this.startDate = createDate;
+        this.user = user;
+        this.friend = friend;
+    }
 
 }

@@ -103,7 +103,7 @@ public class ClanController {
             Authentication authentication) {
 
         User currentUser = (User) authentication.getPrincipal();
-        UserDTO targetUser = userService.getUserById(targetUserId);
+        UserDTO targetUser = UserDTO.fromEntity(userService.getUserById(targetUserId));
         MessageDTO messageDTO= clanService.setRole(clanId, targetUser, newRole, currentUser);
         return ResponseEntity.ok(messageDTO);
     }
@@ -117,7 +117,7 @@ public class ClanController {
             Authentication authentication) {
 
         User currentUser = (User) authentication.getPrincipal();
-        UserDTO user = userService.getUserById(userId);
+        UserDTO user = UserDTO.fromEntity(userService.getUserById(userId));
         MessageDTO messageDTO= joinRequestService.handleJoinRequest(clanId, userId, currentUser, accept);
         return ResponseEntity.ok(messageDTO);
     }

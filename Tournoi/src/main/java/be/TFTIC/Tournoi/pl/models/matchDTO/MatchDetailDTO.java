@@ -4,6 +4,7 @@ package be.TFTIC.Tournoi.pl.models.matchDTO;
 import be.TFTIC.Tournoi.dl.entities.Match;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public record MatchDetailDTO(
         Long matchId,
@@ -17,7 +18,7 @@ public record MatchDetailDTO(
         Integer scoreTeam2Set2,
         Integer scoreTeam1Set3,
         Integer scoreTeam2Set3,
-        LocalDate dateOfMatch
+        LocalDateTime dateOfMatch
 ) {
     public static MatchDetailDTO fromMatch(Match match) {
         String placeName = match.getPlace() != null ? match.getPlace().getNameClub() : null;

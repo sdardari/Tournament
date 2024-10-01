@@ -22,7 +22,7 @@ public class UserController {
     // Obtenir un utilisateur par ID
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-        UserDTO userDTO = userService.getUserById(id);
+        UserDTO userDTO = UserDTO.fromEntity(userService.getUserById(id));
         return ResponseEntity.ok(userDTO);
     }
 
