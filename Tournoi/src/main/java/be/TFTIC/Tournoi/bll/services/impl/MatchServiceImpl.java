@@ -53,6 +53,7 @@ public class MatchServiceImpl implements MatchService {
         oldMatch.setScoreTeam2Set2(matchForm.getScoreTeam2Set2());
         oldMatch.setScoreTeam1Set3(matchForm.getScoreTeam1Set3());
         oldMatch.setScoreTeam2Set3(matchForm.getScoreTeam2Set3());
+        oldMatch.setDateOfMatch(matchForm.getDateOfMatch());
         oldMatch.setPlayed(true);
 
         matchRepository.save(oldMatch);

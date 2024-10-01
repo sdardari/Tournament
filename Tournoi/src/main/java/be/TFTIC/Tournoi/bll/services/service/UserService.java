@@ -13,7 +13,7 @@ public interface UserService {
 
 
     UserDTO createUser(UserRegisterForm userForm);
-    UserDTO getUserById(Long id);
+    User getUserById(Long id);
     List<UserDTO> getAllUsers();
     UserDTO updateUser(Long id, UserRegisterForm userForm);
     void deleteUser(Long id);

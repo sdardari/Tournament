@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter @Setter
 public class MatchForm {
@@ -14,7 +15,7 @@ public class MatchForm {
     private Integer scoreTeam2Set2;
     private Integer scoreTeam1Set3;
     private Integer scoreTeam2Set3;
-    private LocalDate dateOfMatch;
+    private LocalDateTime dateOfMatch;
 
     // Getters and setters
     public Match toEntity() {
