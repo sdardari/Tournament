@@ -3,23 +3,25 @@ package be.TFTIC.Tournoi.bll.services.impl;
 import be.TFTIC.Tournoi.bll.exception.authority.NotEnoughAuthorityException;
 import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.exception.member.NotMemberException;
+import be.TFTIC.Tournoi.bll.services.ChatService;
 import be.TFTIC.Tournoi.bll.services.ClanService;
 import be.TFTIC.Tournoi.bll.services.JoinRequestService;
+import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dal.repositories.ClanRepository;
-import be.TFTIC.Tournoi.dal.repositories.JoinRequestRepository;
-import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Clan;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
+import be.TFTIC.Tournoi.pl.models.chat.ChatDTO;
 import be.TFTIC.Tournoi.pl.models.clan.*;
 import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import be.TFTIC.Tournoi.il.utils.JwtUtils;
+
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,11 +29,10 @@ import java.util.stream.Collectors;
 public class ClanServiceImpl implements ClanService{
 
     private final ClanRepository clanRepository;
-    private final UserRepository userRepository;
-    private final JoinRequestRepository joinRequestRepository;
-    private final JoinRequestService joinRequestService;
-    private final JwtUtils jwtUtils;
 
+    private final UserService userService;
+    private final JoinRequestService joinRequestService;
+    private final ChatService chatService;
 
     @Override
     public ClanDTO createClan(ClanFormCreate cLanFormCreate, Long userId) {
@@ -44,8 +45,15 @@ public class ClanServiceImpl implements ClanService{
         clan.getRoles().put(userId, ClanRole.PRESIDENT);
         clan.setPresident(user.getUsername()) ;
         clan.getMembers().add(user);
+
         clanRepository.save(clan);
-        return ClanDTO.fromEntity(clan, "clan created ");
+
+        Set<Long> membersIds =clan.getMembers().stream()
+                .map(User::getId).collect(Collectors.toSet());
+        String chatName= clan.getName() + " Clan chat";
+        ChatDTO clanChat = chatService.createClanChat(userId, membersIds, chatName);
+
+        return ClanDTO.fromEntity(clan, "clan created successfully with chat");
 
     }
 
@@ -54,9 +62,8 @@ public class ClanServiceImpl implements ClanService{
         return ClanDTO.fromEntity(getById(id), "Result of your research");
     }
 
-    public User getUserById(long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new DoNotExistException("User not found"));
+    public User getUserById(long userId) {
+        return userService.getUserById(userId);
     }
 
     public Clan getById(long id){
