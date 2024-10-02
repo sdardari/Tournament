@@ -36,7 +36,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new DoNotExistException("Username with this id does not exist"));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new DoNotExistException("Username with this id does not exist"));
         return user;
     }
 
@@ -137,7 +138,3 @@ public class UserServiceImpl implements UserService {
 
     //endregion
 }
-
-// je recupere ma team
-// je recupère les joueurs => 2 SINON j'en recupère 3,..
-//

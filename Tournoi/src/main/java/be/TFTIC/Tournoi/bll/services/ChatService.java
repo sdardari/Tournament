@@ -8,10 +8,13 @@ import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ChatService {
     Chat findChatById(Long chatId);
     ChatDTO createChat(Long creatorUserId, Long otherUSerId);
+
+    ChatDTO createClanChat(Long creatorId, Set<Long> membersIds, String chatName);
 
     boolean isUserInChat(Long chatId, Long userId);
 

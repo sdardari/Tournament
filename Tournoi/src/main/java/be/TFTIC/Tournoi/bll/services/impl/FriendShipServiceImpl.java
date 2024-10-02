@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+
 public class FriendShipServiceImpl implements FriendShipService {
 
     private final FriendShipRepository friendShipRepository;
@@ -59,7 +60,7 @@ public class FriendShipServiceImpl implements FriendShipService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         FriendShip friendShip = friendShipRepository.findById(id)
                 .orElseThrow(() -> new DoNotExistException("friendship do not exist"));
-        if(!user.getId().equals(friendShip.getUser().getId()) && !user.getId().equals(friendShip.getFriend().getId())){
+        if (!user.getId().equals(friendShip.getUser().getId()) && !user.getId().equals(friendShip.getFriend().getId())) {
             throw new NotEnoughAuthorityException("Tu ne peux pas supprimé une amitié qui n'est pas a  toi");
         }
         friendShipRepository.delete(friendShip);

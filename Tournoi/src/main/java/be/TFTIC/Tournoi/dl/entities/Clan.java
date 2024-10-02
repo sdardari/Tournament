@@ -1,8 +1,8 @@
 package be.TFTIC.Tournoi.dl.entities;
 
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
-import lombok.*;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +46,9 @@ public class Clan {
     private Set<User> members = new HashSet<>();
 
 
+
+    @ManyToOne
+    private Chat chatId;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
