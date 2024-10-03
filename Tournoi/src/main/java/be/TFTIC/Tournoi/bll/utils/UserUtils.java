@@ -1,15 +1,13 @@
 package be.TFTIC.Tournoi.bll.utils;
 
-import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.User;
-import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class UserUtils {
 
-
-
-
+    public static User getAuthentification (){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user;
+    }
+//TODO a vérifier, et appliquer en remplacant les authentification
 }

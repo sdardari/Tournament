@@ -135,7 +135,7 @@ public class TournamentServiceImpl implements TournamentService {
         createMatch(teams, tournament);
     }
 
-    public void createMatch(List<String> teams, Tournament tournament){
+    private void createMatch(List<String> teams, Tournament tournament){
         if(nbMatch.equals(1)){
             winnerTournament(teams, tournament);
         } else {

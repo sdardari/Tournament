@@ -115,6 +115,9 @@ public class ClanController {
             @RequestParam Long userId,
             @RequestParam boolean accept,
             Authentication authentication) {
+            // TODO utilisation de REquestBody
+            // TODO  changer authentification pars tout par le securityContext
+            //       pour eviter les surcharges
 
         User currentUser = (User) authentication.getPrincipal();
         UserDTO user = UserDTO.fromEntity(userService.getUserById(userId));

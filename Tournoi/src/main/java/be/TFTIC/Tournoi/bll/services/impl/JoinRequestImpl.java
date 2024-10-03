@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.authority.NotEnoughAuthorityException;
 import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.JoinRequestService;
 import be.TFTIC.Tournoi.dal.repositories.ClanRepository;
@@ -80,12 +81,13 @@ public class JoinRequestImpl implements JoinRequestService {
     }
 
     @Override
+    // TODO devrait rajouter DTO pour eviter d'avoir trop de parametre
     public MessageDTO handleJoinRequest(Long clanId, Long userIdToChange, User currentUser, boolean accept) {
         Clan clan = getById(clanId);
 
         ClanRole currentUserRole = clan.getRoles().get(currentUser.getId());
         if (!(currentUserRole == ClanRole.PRESIDENT || currentUserRole == ClanRole.VICE_PRESIDENT)) {
-            return new MessageDTO("Only Presidents or Vice Presidents can handle join requests.");
+            throw new NotEnoughAuthorityException("Only Presidents or Vice Presidents can handle join requests.");
         }
         User userToChange= getUserById(userIdToChange);
 
