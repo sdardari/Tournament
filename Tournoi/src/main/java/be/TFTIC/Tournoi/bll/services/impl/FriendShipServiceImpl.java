@@ -1,6 +1,8 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.authority.NotEnoughAuthorityException;
 import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
+import be.TFTIC.Tournoi.bll.exception.request.BadRequestException;
 import be.TFTIC.Tournoi.bll.services.FriendShipService;
 import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dal.repositories.FriendShipRepository;
@@ -42,12 +44,12 @@ public class FriendShipServiceImpl implements FriendShipService {
     public FriendShipDTO addOne(FriendShipForm friendShipForm, Long friendId) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User friend = userService.getUserById(friendId);
-        if (user.getId().equals(friendId)) {
-            throw new IllegalArgumentException("impossible de devenir ami avec soi même!");
+        if(user.getId().equals(friendId)){
+            throw new BadRequestException("impossible de devenir ami avec soi même!");
         }
         boolean existingFriendShip = friendShipRepository.findByUsers(user.getId(), friendId);
-        if (existingFriendShip) {
-            throw new IllegalStateException("L'amitié existe déja !");
+        if(existingFriendShip){
+            throw new BadRequestException("L'amitié existe déja !");
         }
         LocalDateTime createDate = LocalDateTime.now();
         return FriendShipDTO.fromEntity(friendShipRepository.save(friendShipForm.toEntity(user, friend, createDate)));
@@ -59,7 +61,7 @@ public class FriendShipServiceImpl implements FriendShipService {
         FriendShip friendShip = friendShipRepository.findById(id)
                 .orElseThrow(() -> new DoNotExistException("friendship do not exist"));
         if (!user.getId().equals(friendShip.getUser().getId()) && !user.getId().equals(friendShip.getFriend().getId())) {
-            throw new RuntimeException("Tu ne peux pas supprimé une amitié qui n'est pas a  toi");
+            throw new NotEnoughAuthorityException("Tu ne peux pas supprimé une amitié qui n'est pas a  toi");
         }
         friendShipRepository.delete(friendShip);
     }

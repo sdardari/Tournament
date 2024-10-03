@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.MatchService;
 import be.TFTIC.Tournoi.bll.services.PlaceService;
 import be.TFTIC.Tournoi.bll.services.UserService;
@@ -28,19 +29,8 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public Match getById(Long id) {
         return matchRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Le post avec cette id:" + id + "n'existe pas"));
+                .orElseThrow(() -> new DoNotExistException("Le post avec cette id:" + id + "n'existe pas"));
     }
-
-//    @Override
-//    public Match createMatch(MatchForm matchForm, String team1, String team2) {
-//        Match match = matchForm.toEntity();
-//        match.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
-//
-//        match.setTeam1Players(team1);
-//        match.setTeam2Players(team2);
-//
-//        return matchRepository.save(match);
-//    }
 
     @Override
     public void update(Long id, MatchForm matchForm) {

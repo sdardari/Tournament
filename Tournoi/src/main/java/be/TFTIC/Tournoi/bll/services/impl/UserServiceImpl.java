@@ -50,7 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateUser(Long id, UserRegisterForm userForm) {
         User user = userRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("User with id " + id + " doesn't exist."));
+                new DoNotExistException("User with id " + id + " doesn't exist."));
         user.setUsername(userForm.getUsername());
         user.setFirstname(userForm.getFirstname());
         user.setLastname(userForm.getLastname());
@@ -63,13 +63,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         User existingUser = userRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Username with id " + id + " doesn't exist."));
+                new DoNotExistException("Username with id " + id + " doesn't exist."));
         userRepository.delete(existingUser);
     }
 
     @Override
     public UserRole getUserRole(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User with id " + id + " does not exist."));
+        User user = userRepository.findById(id).orElseThrow(() -> new DoNotExistException("User with id " + id + " does not exist."));
         return user.getRole();
     }
 
@@ -131,6 +131,9 @@ public class UserServiceImpl implements UserService {
         StringBuilder sb = new StringBuilder();
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException(
                 sb.append("User ").append(id).append(" not found.").toString()));
+    }
+    public boolean existsByUsername(String username){
+        return userRepository.existsByUsername(username);
     }
 
     //endregion

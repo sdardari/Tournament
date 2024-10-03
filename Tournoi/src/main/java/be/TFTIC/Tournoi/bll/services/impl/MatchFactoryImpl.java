@@ -1,7 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
 import be.TFTIC.Tournoi.bll.services.MatchFactory;
-import be.TFTIC.Tournoi.bll.services.MatchService;
 import be.TFTIC.Tournoi.bll.services.TournamentService;
 import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.Team;
@@ -9,32 +8,13 @@ import be.TFTIC.Tournoi.dl.entities.Tournament;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MatchFactoryImpl implements MatchFactory {
 
-    private final MatchService matchService;
     private final TournamentService tournamentService;
-    private Integer nbMatch = 0;
-    private List<Team> nextTurnTeam = new ArrayList<>();
-
-    @Override
-    public void createMatch(List<Team> teams, Tournament tournament) {
-//        if(nbMatch.equals(1)){
-//            winnerTournament(teams, tournament);
-//        }
-//        if (nbMatch.equals(0) || nbMatch.equals(nextTurnTeam.size())){
-//            nbMatch = 0;
-//            for (int i = 0; i < teams.size(); i += 2) {
-//                Match match = CreateMatchForm.toEntity(teams.get(i), teams.get(i+1), tournament);
-//                matchService.save(match);
-//                nbMatch++;
-//            }
-//        }
-    }
 
     @Override
     public String determineMatchWinner(Match match) {

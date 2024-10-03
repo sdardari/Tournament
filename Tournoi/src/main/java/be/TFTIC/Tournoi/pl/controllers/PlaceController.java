@@ -35,14 +35,13 @@ public class PlaceController {
 
     @PostMapping("/create")
     public ResponseEntity<PlaceDetailDTO> createPlace(@RequestBody PlaceForm placeForm) {
-        Place place = placeForm.toEntity();
-        Place createdPlace = placeService.createPlace(place);
+        Place createdPlace = placeService.createPlace(placeForm);
         return ResponseEntity.ok(PlaceDetailDTO.fromPlace(createdPlace));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<PlaceDetailDTO> updatePlace(@PathVariable Long id, @RequestBody PlaceForm placeForm) {
-        Place updatedPlace = placeService.updatePlace(id, placeForm.toEntity());
+        Place updatedPlace = placeService.updatePlace(id, placeForm);
         return ResponseEntity.ok(PlaceDetailDTO.fromPlace(updatedPlace));
     }
 

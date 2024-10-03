@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.TeamService;
 import be.TFTIC.Tournoi.dal.repositories.TeamRepository;
 import be.TFTIC.Tournoi.dl.entities.Team;
@@ -17,7 +18,7 @@ public class TeamServiceImpl implements TeamService {
     @Override
     public Team getTeamById(String id) {
         return teamRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Team with id " + id + " not found"));
+                .orElseThrow(() -> new DoNotExistException("Team with id " + id + " not found"));
     }
 
     @Override
