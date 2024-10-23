@@ -18,8 +18,6 @@ public class ClanForm {
     private String name;
     @NotBlank
     private boolean isPrivate;
-    @NotBlank
-    private int minimumTrophies;
 
     private Long presidentId;
     // mettre l'id de le user qui créer le clan

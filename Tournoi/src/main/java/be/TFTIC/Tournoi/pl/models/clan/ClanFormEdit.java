@@ -17,8 +17,6 @@ public class ClanFormEdit {
     private String name;
     @NotBlank
     private boolean isPrivate;
-    @NotBlank
-    private int minimumTrophies;
 
     public Clan toEntity(){
         return new Clan(name,isPrivate);

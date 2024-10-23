@@ -35,36 +35,6 @@ public class TournamentController {
         return ResponseEntity.ok(tournament);
     }
 
-    @GetMapping("/{tournoiId}/participants")
-    public ResponseEntity<List<TeamDTO>> getParticipant(@PathVariable long tournoiId){
-        List<TeamDTO> participants = tournamentService.getParticipant(tournoiId).stream()
-                .map(TeamDTO::fromEntity)
-                .toList();
-        return ResponseEntity.ok(participants);
-    }
-
-    @PostMapping
-    public ResponseEntity<Void> createTournament(@Valid @RequestBody TournamentForm form){
-        if(form.nbPlace()<4){
-            throw new RuntimeException("there is not enough room in your tournament");
-        }
-        Long id = tournamentService.create(form.toEntity());
-        UriComponents uriComponents = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(id);
-        return ResponseEntity.created(uriComponents.toUri()).build();
-    }
-
-    @PostMapping("/{id}/inscription")
-    public ResponseEntity<String> inscriptionTournament(@PathVariable long id){
-        try {
-            tournamentService.inscription(id);
-            return ResponseEntity.ok("User registered successfully to the tournament.");
-        } catch (IllegalStateException e){
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateTournament(@Valid @RequestBody TournamentForm form, @PathVariable long id){
         tournamentService.update(id, form.toEntity());
@@ -80,6 +50,7 @@ public class TournamentController {
     @GetMapping("/{id}/winner")
     public ResponseEntity<String> winnerTournament(@PathVariable Long id){
         String winner = tournamentService.getWinner(id);
+
         return ResponseEntity.ok(winner);
     }
 }

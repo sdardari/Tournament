@@ -73,6 +73,21 @@ public class RankingServiceImpl implements RankingService {
     }
 
     @Override
+    public void winTournament(Long rankingId) {
+        Ranking ranking = getRankingById(rankingId);
+        if(!ranking.isInPromotionUp()){
+            ranking.setWinTournament(ranking.getWinTournament() + 1);
+            ranking.setLeaguePoints(ranking.getLeaguePoints() + 40);
+            isPromotedUp(rankingId);
+        }else {
+            promotedUp(rankingId);
+            ranking.setWinTournament(ranking.getWinTournament() + 1);
+            ranking.setLeaguePoints(ranking.getLeaguePoints() + 10);
+            ranking.setNbMatches(ranking.getNbMatches() + 1);
+        }
+    }
+
+    @Override
     public void isPromotedUp(Long rankingId) {
         Ranking ranking = getRankingById(rankingId);
         if(ranking.getLeaguePoints() >= 100){
@@ -99,6 +114,9 @@ public class RankingServiceImpl implements RankingService {
             initializer(rankingId);
             ranking.setLeaguePoints(ranking.getLeaguePoints() + 90);
             ranking.setInPromotionUp(false);
+        } else {
+            ranking.setWins(ranking.getWins() + 1);
+            ranking.setNbMatches(ranking.getNbMatches() + 1);
         }
     }
 
@@ -111,6 +129,9 @@ public class RankingServiceImpl implements RankingService {
             ranking.setInPromotionDown(false);
         }else if (ranking.getLosses() >= 3) {
             promotedDown(rankingId);
+        }else {
+            ranking.setLosses(ranking.getLosses() + 1);
+            ranking.setNbMatches(ranking.getNbMatches() + 1);
         }
     }
 

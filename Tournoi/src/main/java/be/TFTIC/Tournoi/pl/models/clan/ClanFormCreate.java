@@ -18,7 +18,6 @@ public class ClanFormCreate {
 
     private boolean isPrivate;
 
-    private int minimumTrophies;
 
 
     public Clan toEntity(){

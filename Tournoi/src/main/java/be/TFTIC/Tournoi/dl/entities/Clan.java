@@ -57,8 +57,15 @@ public class Clan {
 
     }
 
-    @OneToOne
-    @JoinColumn(name = "ranking_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ranking_id", referencedColumnName = "id")
     private Ranking ranking;
+
+    public Clan(String name, String president, boolean isPrivate){
+        this.name=name;
+        this.president=president;
+        this.isPrivate=isPrivate;
+        Ranking ranking = new Ranking();
+    }
 
 }

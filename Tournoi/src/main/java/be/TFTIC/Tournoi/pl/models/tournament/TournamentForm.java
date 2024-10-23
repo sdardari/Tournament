@@ -12,5 +12,4 @@ public record TournamentForm(
     public Tournament toEntity(){
         return new Tournament(name, localisation, nbPlace);
     }
-
 }

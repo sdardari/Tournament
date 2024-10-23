@@ -41,7 +41,6 @@ public class ClanServiceImpl implements ClanService{
         Clan clan = cLanFormCreate.toEntity();
         clan.setName(cLanFormCreate.getName());
         clan.setPrivate(cLanFormCreate.isPrivate());
-        clan.setMinimumTrophies(cLanFormCreate.getMinimumTrophies());
         clan.getRoles().put(userId, ClanRole.PRESIDENT);
         clan.setPresident(user.getUsername()) ;
         clan.getMembers().add(user);
@@ -83,7 +82,6 @@ public class ClanServiceImpl implements ClanService{
         }
         clan.setName(clanFormEdit.getName());
         clan.setPrivate(clanFormEdit.isPrivate());
-        clan.setMinimumTrophies(clanFormEdit.getMinimumTrophies());
 
         clan=clanRepository.save(clan);
         return ClanDTO.fromEntity(clan, "Clan succesfully modified");

@@ -5,6 +5,7 @@ import be.TFTIC.Tournoi.bll.specifications.UserSpecification;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Match;
 import be.TFTIC.Tournoi.dl.entities.Ranking;
+import be.TFTIC.Tournoi.dl.entities.Team;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RankingServiceImpl rankingService;
+    private final TeamServiceImpl teamService;
 
     //region CRUD
 

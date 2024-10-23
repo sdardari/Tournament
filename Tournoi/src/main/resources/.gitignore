@@ -1,5 +1,5 @@
 HELP.md
-../../../target/
+/target/
 Tournoi/src/main/resources/application.yml
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

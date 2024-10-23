@@ -8,8 +8,8 @@ import java.util.List;
 @Entity
 @Table(name = "teams")
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Team {
 
     @Id
@@ -30,7 +30,17 @@ public class Team {
 //        this.users = new ArrayList<>();
 //    }
 
+    @OneToOne
+    @JoinColumn(name = "ranking_id", referencedColumnName = "id")
+    private Ranking ranking;
+
     public Team(String name) {
+        this.name = name;
+    }
+
+    public Team(String teamId, String name, List<User> users) {
+        this.users = users;
+        this.teamId = teamId;
         this.name = name;
     }
 }

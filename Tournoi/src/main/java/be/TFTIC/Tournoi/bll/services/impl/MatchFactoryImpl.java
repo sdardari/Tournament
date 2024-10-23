@@ -1,15 +1,14 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
 import be.TFTIC.Tournoi.bll.services.*;
-import be.TFTIC.Tournoi.dl.entities.Match;
-import be.TFTIC.Tournoi.dl.entities.Team;
-import be.TFTIC.Tournoi.dl.entities.Tournament;
-import be.TFTIC.Tournoi.dl.entities.User;
+import be.TFTIC.Tournoi.bll.services.MatchFactory;
+import be.TFTIC.Tournoi.dl.entities.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +17,7 @@ public class MatchFactoryImpl implements MatchFactory {
     private final MatchService matchService;
     private final TournamentService tournamentService;
     private final TeamService teamService;
+    private final ClanService clanService;
     private final UserService userService;
     private final RankingService rankingService;
     private Integer nbMatch = 0;
@@ -72,12 +72,24 @@ public class MatchFactoryImpl implements MatchFactory {
         }
         if(winner != null){
             List<String> usersWinnersId = userService.getPlayersOfTeam(winner);
+            if(!Objects.equals(usersWinnersId.get(2), "00")){
+                Team teamWinner = teamService.getTeamById(usersWinnersId.get(2));
+                rankingService.winMatch(teamWinner.getRanking().getId());
+            } else if (!Objects.equals(usersWinnersId.get(3), "00")) {
+                Clan clanWinner = clanService.getById(userService.parsePlayerId(usersWinnersId, 3));
+            }
             User userWinner1 = userService.getById(userService.parsePlayerId(usersWinnersId, 0));
             User userWinner2 = userService.getById(userService.parsePlayerId(usersWinnersId, 1));
             rankingService.winMatch(userWinner1.getRanking().getId());
             rankingService.winMatch(userWinner2.getRanking().getId());
         } else if (loser != null) {
             List<String> usersLosersId = userService.getPlayersOfTeam(loser);
+            if(!Objects.equals(usersLosersId.get(2), "00")){
+                Team teamWinner = teamService.getTeamById(usersLosersId.get(2));
+                rankingService.lossMatch(teamWinner.getRanking().getId());
+            } else if (!Objects.equals(usersLosersId.get(3), "00")) {
+                Clan clanWinner = clanService.getById(userService.parsePlayerId(usersLosersId, 3));
+            }
             User userLoser1 = userService.getById(userService.parsePlayerId(usersLosersId, 0));
             User userLoser2 = userService.getById(userService.parsePlayerId(usersLosersId, 1));
             rankingService.lossMatch(userLoser1.getRanking().getId());
@@ -87,7 +99,6 @@ public class MatchFactoryImpl implements MatchFactory {
     }
 
     private void winnerTournament(List<Team> teams, Tournament tournament) {
-        // Logique pour déterminer le gagnant du tournoi
         for (Team team : teams) {
             System.out.println("Winner: " + team.getName());
         }
@@ -96,4 +107,6 @@ public class MatchFactoryImpl implements MatchFactory {
     private String determinerSetWinner(int scoreTeam1, int scoreTeam2) {
         return scoreTeam1 > scoreTeam2 ? "Team 1" : "Team 2";
     }
+
+
 }

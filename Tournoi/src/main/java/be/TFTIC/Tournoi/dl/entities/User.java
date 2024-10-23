@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -40,7 +41,8 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Include
     private String email;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne
+    @JoinColumn(name = "ranking_id", referencedColumnName = "id")
     private Ranking ranking;
 
     @Setter
@@ -65,7 +67,7 @@ public class User implements UserDetails {
         this.lastname = lastname;
         this.email = email;
         this.password = password;
-        this.role = role;
+        this.role = UserRole.USER;
         this.clan = clan;
     }
 
@@ -76,7 +78,11 @@ public class User implements UserDetails {
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+        this.role = UserRole.USER;
         this.ranking = new Ranking();
+    }
+
+    public <E> User(Object o, String adminUser, String admin, String user, String mail, int i, String admin123, UserRole userRole, ArrayList<E> es) {
     }
 
 

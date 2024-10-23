@@ -12,6 +12,4 @@ public class UserForm {
     private String lastname;
     private String email;
 
-
-
 }

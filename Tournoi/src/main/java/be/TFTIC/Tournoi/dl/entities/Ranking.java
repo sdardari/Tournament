@@ -30,6 +30,8 @@ public class Ranking {
 
     private int losses;
 
+    private int winTournament;
+
     private boolean inPromotionUp;
 
     private boolean inPromotionDown;
