@@ -5,7 +5,7 @@ import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.User.UserForm;
-import be.TFTIC.Tournoi.pl.models.authDTO.UserRegisterForm;
+import be.TFTIC.Tournoi.pl.models.auth.UserRegisterForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +22,7 @@ public class UserController {
     // Obtenir un utilisateur par ID
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-        UserDTO userDTO = userService.getUserById(id);
+        UserDTO userDTO = UserDTO.fromEntity(userService.getUserById(id));
         return ResponseEntity.ok(userDTO);
     }
 

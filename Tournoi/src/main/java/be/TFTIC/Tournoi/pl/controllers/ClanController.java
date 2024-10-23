@@ -6,10 +6,9 @@ import be.TFTIC.Tournoi.bll.services.JoinRequestService;
 import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
-import be.TFTIC.Tournoi.il.utils.JwtUtils;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.clan.*;
-import be.TFTIC.Tournoi.pl.models.message.MessageDTO;
+import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -104,7 +103,7 @@ public class ClanController {
             Authentication authentication) {
 
         User currentUser = (User) authentication.getPrincipal();
-        UserDTO targetUser = userService.getUserById(targetUserId);
+        UserDTO targetUser = UserDTO.fromEntity(userService.getUserById(targetUserId));
         MessageDTO messageDTO= clanService.setRole(clanId, targetUser, newRole, currentUser);
         return ResponseEntity.ok(messageDTO);
     }
@@ -116,9 +115,12 @@ public class ClanController {
             @RequestParam Long userId,
             @RequestParam boolean accept,
             Authentication authentication) {
+            // TODO utilisation de REquestBody
+            // TODO  changer authentification pars tout par le securityContext
+            //       pour eviter les surcharges
 
         User currentUser = (User) authentication.getPrincipal();
-        UserDTO user = userService.getUserById(userId);
+        UserDTO user = UserDTO.fromEntity(userService.getUserById(userId));
         MessageDTO messageDTO= joinRequestService.handleJoinRequest(clanId, userId, currentUser, accept);
         return ResponseEntity.ok(messageDTO);
     }

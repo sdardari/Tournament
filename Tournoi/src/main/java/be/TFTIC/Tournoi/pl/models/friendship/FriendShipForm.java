@@ -1,30 +1,14 @@
 package be.TFTIC.Tournoi.pl.models.friendship;
 
-
-import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.FriendShip;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import be.TFTIC.Tournoi.dl.entities.User;
 
-@Data
-@RequiredArgsConstructor
-@AllArgsConstructor
-public class FriendShipForm {
+import java.time.LocalDateTime;
 
-    private final UserRepository userRepository;
+public record FriendShipForm(
 
-    private Long userId;
-    private Long friendId;
-
-
-
-    public FriendShip toEntity(){
-        FriendShip friendShip = new FriendShip();
-        friendShip.setUser(userRepository.findById(userId).orElseThrow());
-        friendShip.setFriend(userRepository.findById(friendId).orElseThrow());
-        return friendShip;
+) {
+    public FriendShip toEntity(User user, User friend, LocalDateTime createDate){
+        return new FriendShip(createDate, user, friend);
     }
-
-
 }

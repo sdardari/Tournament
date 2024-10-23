@@ -9,6 +9,7 @@ import be.TFTIC.Tournoi.dl.enums.TypeTournament;
 import be.TFTIC.Tournoi.pl.models.matchDTO.CreateMatchForm;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -41,7 +42,7 @@ public class TournamentServiceImpl implements TournamentService {
     @Override
     public Tournament getById(Long id) {
         return tournamentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("The tournament with id " + id + " not found"));
+                .orElseThrow(() -> new DoNotExistException("The tournament with id " + id + " not found"));
     }
 
     @Override

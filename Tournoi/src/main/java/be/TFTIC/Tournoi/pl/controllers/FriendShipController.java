@@ -15,9 +15,10 @@ import java.util.List;
 public class FriendShipController {
 
     private final FriendShipService friendShipService;
-    @PostMapping("/add")
-    public ResponseEntity<FriendShipDTO> addFriend(@RequestBody FriendShipForm form) {
-        return ResponseEntity.ok(friendShipService.addOne(form));
+    @PostMapping("/add/{id}")
+    public ResponseEntity<FriendShipDTO> addFriend(@PathVariable long id) {
+        FriendShipForm form = new FriendShipForm();
+        return ResponseEntity.ok(friendShipService.addOne(form, id));
     }
 
     @GetMapping("/{id}")
@@ -31,7 +32,8 @@ public class FriendShipController {
     }
 
     @DeleteMapping("delete/{id}")
-    public ResponseEntity<FriendShipDTO> deleteFriend(@PathVariable Long id) {
-        return ResponseEntity.ok(friendShipService.delete(id));
+    public ResponseEntity<Void> deleteFriend(@PathVariable Long id) {
+        friendShipService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

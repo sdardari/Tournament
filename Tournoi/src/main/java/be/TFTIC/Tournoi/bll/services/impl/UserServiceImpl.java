@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.bll.specifications.UserSpecification;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
@@ -10,10 +11,8 @@ import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.User.UserForm;
-import be.TFTIC.Tournoi.pl.models.authDTO.UserRegisterForm;
-import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
+import be.TFTIC.Tournoi.pl.models.auth.UserRegisterForm;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -39,9 +38,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO getUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Username with this id does not exist"));
-        return UserDTO.fromEntity(user);
+    public User getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new DoNotExistException("Username with this id does not exist"));
+        return user;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO updateUser(Long id, UserRegisterForm userForm) {
         User user = userRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("User with id " + id + " doesn't exist."));
+                new DoNotExistException("User with id " + id + " doesn't exist."));
         user.setUsername(userForm.getUsername());
         user.setFirstname(userForm.getFirstname());
         user.setLastname(userForm.getLastname());
@@ -66,13 +66,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         User existingUser = userRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Username with id " + id + " doesn't exist."));
+                new DoNotExistException("Username with id " + id + " doesn't exist."));
         userRepository.delete(existingUser);
     }
 
     @Override
     public UserRole getUserRole(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User with id " + id + " does not exist."));
+        User user = userRepository.findById(id).orElseThrow(() -> new DoNotExistException("User with id " + id + " does not exist."));
         return user.getRole();
     }
 
@@ -141,10 +141,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException(
                 sb.append("User ").append(id).append(" not found.").toString()));
     }
+    public boolean existsByUsername(String username){
+        return userRepository.existsByUsername(username);
+    }
 
     //endregion
 }
-
-// je recupere ma team
-// je recupère les joueurs => 2 SINON j'en recupère 3,..
-//

@@ -2,11 +2,14 @@ package be.TFTIC.Tournoi.bll.services.impl;
 
 import be.TFTIC.Tournoi.bll.services.*;
 import be.TFTIC.Tournoi.bll.services.MatchFactory;
+import be.TFTIC.Tournoi.bll.services.TournamentService;
+import be.TFTIC.Tournoi.dl.entities.Match;
+import be.TFTIC.Tournoi.dl.entities.Team;
+import be.TFTIC.Tournoi.dl.entities.Tournament;
 import be.TFTIC.Tournoi.dl.entities.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -107,6 +110,4 @@ public class MatchFactoryImpl implements MatchFactory {
     private String determinerSetWinner(int scoreTeam1, int scoreTeam2) {
         return scoreTeam1 > scoreTeam2 ? "Team 1" : "Team 2";
     }
-
-
 }

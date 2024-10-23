@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.security;
 
+import be.TFTIC.Tournoi.bll.exception.request.BadRequestException;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
@@ -20,9 +21,6 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     public User register(User user) {
-        if(userRepository.existsByUsername(user.getUsername())){
-            throw new RuntimeException("User with username "+ user.getUsername() + " already exist ");
-        }
         user.setRole(UserRole.USER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
@@ -32,7 +30,7 @@ public class AuthServiceImpl implements AuthService{
     public User login(String username, String password) {
         User existingUser= userRepository.findByUsername(username).orElseThrow();
         if(!passwordEncoder.matches(password,existingUser.getPassword())){
-            throw new RuntimeException("Incorrect password");
+            throw new BadRequestException("Incorrect password");
         }
         return existingUser;
     }

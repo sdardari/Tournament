@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Application</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #messages {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin: 5px 0;
+        }
+        .sender {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<h1>Chat Application</h1>
+
+<form th:action="@{/chat/create}" method="post">
+    <h2>Start a Chat</h2>
+    <input type="text" name="otherUserId" placeholder="Other User ID" required />
+    <button type="submit">Start Chat</button>
+</form>
+
+<form th:action="@{/chat/messages/{chatId}(chatId=${currentChatId})}" method="get" th:if="${currentChatId}">
+    <h2>Chat Messages</h2>
+    <div id="messages" th:utext="${messagesHtml}"></div>
+    <input type="text" name="content" placeholder="Type a message" required />
+    <input type="hidden" name="chatId" th:value="${currentChatId}" />
+    <button type="submit">Send</button>
+</form>
+
+<form th:action="@{/chat/addUserToChat/{chatId}(chatId=${currentChatId})}" method="post" th:if="${currentChatId}">
+    <h2>Manage Chat</h2>
+    <input type="text" name="usertoAddId" placeholder="User ID to Add" required />
+    <button type="submit">Add User</button>
+</form>
+
+<form th:action="@{/chat/removeUser/{chatId}(chatId=${currentChatId})}" method="post" th:if="${currentChatId}">
+    <input type="text" name="userIdToRemove" placeholder="User ID to Remove" required />
+    <button type="submit">Remove User</button>
+</form>
+
+<form th:action="@{/chat/rename/{chatId}(chatId=${currentChatId})}" method="post" th:if="${currentChatId}">
+    <input type="text" name="newChatName" placeholder="New Chat Name" required />
+    <button type="submit">Rename Chat</button>
+</form>
+</body>
+</html>

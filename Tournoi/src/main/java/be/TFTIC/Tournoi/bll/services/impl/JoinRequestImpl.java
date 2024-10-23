@@ -1,5 +1,7 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.authority.NotEnoughAuthorityException;
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.JoinRequestService;
 import be.TFTIC.Tournoi.dal.repositories.ClanRepository;
 import be.TFTIC.Tournoi.dal.repositories.JoinRequestRepository;
@@ -10,7 +12,7 @@ import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.dl.enums.RequestStatus;
 import be.TFTIC.Tournoi.pl.models.clan.ClanDTO;
-import be.TFTIC.Tournoi.pl.models.message.MessageDTO;
+import be.TFTIC.Tournoi.pl.models.messageException.MessageDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +28,12 @@ public class JoinRequestImpl implements JoinRequestService {
 
     public User getUserById(long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Clan not found"));
+                .orElseThrow(() -> new DoNotExistException("Clan not found"));
     }
 
     public Clan getById(long id){
         return clanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Clan not found"));
+                .orElseThrow(() -> new DoNotExistException("Clan not found"));
     }
 
     @Override
@@ -80,18 +82,18 @@ public class JoinRequestImpl implements JoinRequestService {
     }
 
     @Override
+    // TODO devrait rajouter DTO pour eviter d'avoir trop de parametre
     public MessageDTO handleJoinRequest(Long clanId, Long userIdToChange, User currentUser, boolean accept) {
         Clan clan = getById(clanId);
 
         ClanRole currentUserRole = clan.getRoles().get(currentUser.getId());
-        if (currentUserRole == null ||
-                !(currentUserRole == ClanRole.PRESIDENT || currentUserRole == ClanRole.VICE_PRESIDENT)) {
-            return new MessageDTO("Only Presidents or Vice Presidents can handle join requests.");
+        if (!(currentUserRole == ClanRole.PRESIDENT || currentUserRole == ClanRole.VICE_PRESIDENT)) {
+            throw new NotEnoughAuthorityException("Only Presidents or Vice Presidents can handle join requests.");
         }
         User userToChange= getUserById(userIdToChange);
 
         JoinRequest joinRequest= joinRequestRepository.findByUserAndClanAndStatus(userToChange,clan,RequestStatus.PENDING)
-                .orElseThrow(()-> new RuntimeException("Join request not found "));
+                .orElseThrow(()-> new DoNotExistException("Join request not found "));
 
         if (accept) {
             clan.getRoles().put(userToChange.getId(), ClanRole.MEMBER);

@@ -24,11 +24,8 @@ public class MatchController {
 
     @GetMapping
     public ResponseEntity<List<MatchDetailDTO>> getAllMatches() {
-        List<Match> matches = matchService.getAll();
-        List<MatchDetailDTO> matchDTOs = matches.stream()
-                .map(MatchDetailDTO::fromMatch)
-                .toList();
-        return ResponseEntity.ok(matchDTOs);
+        return ResponseEntity.ok(matchService.getAll().stream()
+                .map(MatchDetailDTO::fromMatch).toList());
     }
 
     @GetMapping("/{id}")

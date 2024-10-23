@@ -1,10 +1,12 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
-import be.TFTIC.Tournoi.bll.services.*;
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
+import be.TFTIC.Tournoi.bll.services.MatchService;
+import be.TFTIC.Tournoi.bll.services.PlaceService;
+import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dal.repositories.MatchRepository;
 
 import be.TFTIC.Tournoi.dl.entities.Match;
-import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.pl.models.matchDTO.MatchForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,19 +29,8 @@ public class MatchServiceImpl implements MatchService {
     @Override
     public Match getById(Long id) {
         return matchRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Le post avec cette id:" + id + "n'existe pas"));
+                .orElseThrow(() -> new DoNotExistException("Le post avec cette id:" + id + "n'existe pas"));
     }
-
-//    @Override
-//    public Match createMatch(MatchForm matchForm, String team1, String team2) {
-//        Match match = matchForm.toEntity();
-//        match.setPlace(placeService.getPlaceById(matchForm.getPlaceId()));
-//
-//        match.setTeam1Players(team1);
-//        match.setTeam2Players(team2);
-//
-//        return matchRepository.save(match);
-//    }
 
     @Override
     public void update(Long id, MatchForm matchForm) {
@@ -52,6 +43,7 @@ public class MatchServiceImpl implements MatchService {
         oldMatch.setScoreTeam2Set2(matchForm.getScoreTeam2Set2());
         oldMatch.setScoreTeam1Set3(matchForm.getScoreTeam1Set3());
         oldMatch.setScoreTeam2Set3(matchForm.getScoreTeam2Set3());
+        oldMatch.setDateOfMatch(matchForm.getDateOfMatch());
         oldMatch.setPlayed(true);
 
         matchRepository.save(oldMatch);
