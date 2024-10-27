@@ -1,9 +1,8 @@
 package be.TFTIC.Tournoi.dl.entities;
 
-import be.TFTIC.Tournoi.dl.enums.ClanRole;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
-import lombok.*;
 import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,24 +21,28 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="user_id")
+    @EqualsAndHashCode.Include
     private Long Id;
 
     @Column(nullable = false)
+    @EqualsAndHashCode.Include
     private String username;
 
     @Column(nullable = false)
+    @EqualsAndHashCode.Include
     private String firstname;
 
     @Column(nullable = false)
+    @EqualsAndHashCode.Include
     private String lastname;
 
     @Column(nullable = false, unique = true)
+    @EqualsAndHashCode.Include
     private String email;
 
-    @Column
-    private int ranking;
-
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "ranking_id", referencedColumnName = "id")
+    private Ranking ranking;
 
     @Setter
     @Column(nullable = false)
@@ -49,11 +52,19 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false,length = 20)
     private UserRole role;
+    // Many-to-one relation with Clan
+    @ManyToOne
+    @JoinColumn(name = "clan_id")
+    private Clan clan;
 
     @OneToMany(mappedBy="user")
     private List<FriendShip> friendShips;
 
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
 
     public User(String username, String firstname, String lastname, String email, String password) {
         this.username = username;
@@ -63,12 +74,15 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+    @PrePersist
+    protected void onCreate() {
+        if (this.role == null) {
+            this.role = UserRole.USER;
+        }
+        if (this.ranking == null) {
+            this.ranking = new Ranking();
+        }
     }
-
 
     @Override
     public boolean isAccountNonExpired() {

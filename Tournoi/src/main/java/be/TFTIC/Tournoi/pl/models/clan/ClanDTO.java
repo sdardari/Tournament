@@ -10,7 +10,6 @@ public record ClanDTO (
         Long id,
         String name,
         boolean isPrivate,
-        int minimumTrophies,
         String president,
         List<ClanMemberDTO> members,
         String message
@@ -23,7 +22,6 @@ public record ClanDTO (
         return new ClanDTO(clan.getClanId(),
                 clan.getName(),
                 clan.getIsPrivate(),
-                clan.getMinimumTrophies(),
                 clan.getPresident(),
                 clanMemberDTOS,
                 message);

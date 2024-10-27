@@ -34,9 +34,6 @@ public class Clan {
     }
 
 
-    @Column
-    private int minimumTrophies=0;
-
     @ManyToMany
     @JoinTable(
             name = "user_clan",
@@ -58,15 +55,21 @@ public class Clan {
     private Map<Long, ClanRole> roles = new HashMap<>();
 
 
-    public Clan (String name, boolean isPrivate, int minimumTrophies){
+    public Clan (String name, boolean isPrivate){
         this.name=name;
         this.isPrivate=isPrivate;
-        this.minimumTrophies=minimumTrophies;
 
     }
 
-    public boolean canJoin(User user) {
-        return !isPrivate && user.getRanking() >= minimumTrophies;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ranking_id", referencedColumnName = "id")
+    private Ranking ranking;
+
+    public Clan(String name, String president, boolean isPrivate){
+        this.name=name;
+        this.president=president;
+        this.isPrivate=isPrivate;
+        Ranking ranking = new Ranking();
     }
 
 }

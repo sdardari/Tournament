@@ -5,6 +5,8 @@ import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.bll.specifications.UserSpecification;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Match;
+import be.TFTIC.Tournoi.dl.entities.Ranking;
+import be.TFTIC.Tournoi.dl.entities.Team;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
@@ -22,6 +24,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RankingServiceImpl rankingService;
+    private final TeamServiceImpl teamService;
 
     //region CRUD
 
@@ -32,7 +36,6 @@ public class UserServiceImpl implements UserService {
         return UserDTO.fromEntity(user);
         //        return UserDTO.fromEntity(repo.save(form.toEntity()));
     }
-
 
     @Override
     public User getUserById(Long id) {
@@ -100,6 +103,7 @@ public class UserServiceImpl implements UserService {
     //endregion
 
     //region UTILS
+    @Override
     public List<User> fromStringToUser(Match match) {
         //TODO FAIRE LA GESTION DES CHAINES DE CARACTERES
         List<User> users = new ArrayList<>();
@@ -111,23 +115,28 @@ public class UserServiceImpl implements UserService {
         return users;
     }
 
-    private int getSize(String team) {
+    @Override
+    public int getSize(String team) {
         return getPlayersOfTeam(team).size();
     }
 
-    private User addUserFromMatchForm(String team, int id) {
+    @Override
+    public User addUserFromMatchForm(String team, int id) {
         return getById(parsePlayerId(getPlayersOfTeam(team), id));
     }
 
-    private Long parsePlayerId(List<String> teams, int id) {
+    @Override
+    public Long parsePlayerId(List<String> teams, int id) {
         return Long.parseLong(teams.get(id));
     }
 
-    private List<String> getPlayersOfTeam(String teamId) {
+    @Override
+    public List<String> getPlayersOfTeam(String teamId) {
         return Arrays.stream(teamId.split("_")).toList();
     }
 
-    private User getById(Long id) {
+    @Override
+    public User getById(Long id) {
         StringBuilder sb = new StringBuilder();
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException(
                 sb.append("User ").append(id).append(" not found.").toString()));

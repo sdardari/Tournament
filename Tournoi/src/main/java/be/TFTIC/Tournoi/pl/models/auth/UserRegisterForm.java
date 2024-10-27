@@ -31,8 +31,7 @@ public class UserRegisterForm {
     String confirmPassword;
 
     //rajouter les validation ci-dessus
-        public User toEntity () {
+    public User toEntity () {
         return new User(username, firstname, lastname, email, password);
-
     }
 }

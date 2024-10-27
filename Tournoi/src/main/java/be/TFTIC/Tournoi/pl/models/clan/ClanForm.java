@@ -18,14 +18,12 @@ public class ClanForm {
     private String name;
     @NotBlank
     private boolean isPrivate;
-    @NotBlank
-    private int minimumTrophies;
 
     private Long presidentId;
     // mettre l'id de le user qui créer le clan
     // rajout par la suite de changement de position de président max 2
 
     public Clan toEntity(){
-        return new Clan(name,isPrivate,minimumTrophies);
+        return new Clan(name,isPrivate);
     }
 }

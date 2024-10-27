@@ -58,7 +58,8 @@ public class JoinRequestImpl implements JoinRequestService {
             return ClanDTO.fromEntity(clan, "You already have a pending join request for this clan.");
         }
 
-        if(!clan.getIsPrivate()&&user.getRanking()>= clan.getMinimumTrophies()){
+        if(!clan.getIsPrivate()&& user.getRanking().getDivision().ordinal() >= clan.getRanking().getDivision().ordinal() - 1
+                && user.getRanking().getDivision().ordinal() <= clan.getRanking().getDivision().ordinal() + 1){ // TODO
             clan.getMembers().add(user);
             clan.getRoles().put(user.getId(), ClanRole.MEMBER);
             clanRepository.save(clan);
