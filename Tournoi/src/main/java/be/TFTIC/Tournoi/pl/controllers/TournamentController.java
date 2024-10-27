@@ -3,9 +3,7 @@ package be.TFTIC.Tournoi.pl.controllers;
 import be.TFTIC.Tournoi.bll.services.*;
 
 import be.TFTIC.Tournoi.dl.entities.TournamentRegisterTemp;
-import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.TypeTournament;
-import be.TFTIC.Tournoi.pl.models.team.TeamDTO;
 import be.TFTIC.Tournoi.pl.models.tournament.TournamentDTO;
 import be.TFTIC.Tournoi.pl.models.tournament.TournamentForm;
 import be.TFTIC.Tournoi.pl.models.tournamentRegisterDTO.TournamentRegisterClanForm;
@@ -15,8 +13,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponents;
 
 import java.util.List;
 
@@ -41,10 +37,8 @@ public class TournamentController {
             @RequestParam Long userId,
             @RequestParam TypeTournament typeTournament) {
 
-        // Appel de la méthode inscriptionSolo pour obtenir le TournamentRegisterTemp
         TournamentRegisterTemp tournamentRegisterTemp = tournamentRegisterService.inscriptionSolo(userId, typeTournament);
 
-        // Conversion en TournamentRegisterSoloForm
         TournamentRegisterSoloForm soloForm = new TournamentRegisterSoloForm();
         soloForm.setUserId1(tournamentRegisterTemp.getUserId());
         soloForm.setTournamentId(tournamentRegisterTemp.getTournamentId());
@@ -58,7 +52,6 @@ public class TournamentController {
 
         TournamentRegisterTemp tournamentRegisterTemp = tournamentRegisterService.inscriptionTeam(teamId, typeTournament);
 
-        // Conversion en TournamentRegisterSoloForm
         TournamentRegisterTeamForm teamForm = new TournamentRegisterTeamForm();
         teamForm.setTeamId(tournamentRegisterTemp.getUserId());
         teamForm.setTournamentId(tournamentRegisterTemp.getTournamentId());
@@ -70,10 +63,8 @@ public class TournamentController {
             @RequestParam Long clanId,
             @RequestParam TypeTournament typeTournament) {
 
-        // Appel de la méthode inscriptionSolo pour obtenir le TournamentRegisterTemp
         TournamentRegisterTemp tournamentRegisterTemp = tournamentRegisterService.inscriptionClan(clanId, typeTournament);
 
-        // Conversion en TournamentRegisterSoloForm
         TournamentRegisterClanForm clanForm = new TournamentRegisterClanForm();
         clanForm.setClanId(tournamentRegisterTemp.getUserId());
         clanForm.setTournamentId(tournamentRegisterTemp.getTournamentId());

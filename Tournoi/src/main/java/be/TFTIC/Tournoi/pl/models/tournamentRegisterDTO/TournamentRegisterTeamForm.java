@@ -8,7 +8,6 @@ public class TournamentRegisterTeamForm {
     private Long teamId;
     private Long tournamentId;
 
-    // Convert to entity
     public TournamentRegisterTeamForm toEntity() {
         TournamentRegisterTeamForm registration = new TournamentRegisterTeamForm();
         registration.setTeamId(this.teamId);
