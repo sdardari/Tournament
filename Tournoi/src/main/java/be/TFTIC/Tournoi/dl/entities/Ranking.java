@@ -51,10 +51,21 @@ public class Ranking {
 
     @PrePersist
     protected void onCreate() {
-        this.division = Division.UNRANKED;
-        this.leaguePoints = 0;
-        this.nbMatches = 0;
-        this.wins = 0;
-        this.losses = 0;
+        // Applique les valeurs par défaut uniquement si elles n'ont pas été définies
+        if (this.division == null) {
+            this.division = Division.UNRANKED;
+        }
+        if (this.leaguePoints == 0) {
+            this.leaguePoints = 0;
+        }
+        if (this.nbMatches == 0) {
+            this.nbMatches = 0;
+        }
+        if (this.wins == 0) {
+            this.wins = 0;
+        }
+        if (this.losses == 0) {
+            this.losses = 0;
+        }
     }
 }

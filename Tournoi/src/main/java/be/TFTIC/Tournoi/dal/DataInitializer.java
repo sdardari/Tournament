@@ -3,18 +3,17 @@ package be.TFTIC.Tournoi.dal;
 
 import be.TFTIC.Tournoi.dal.repositories.AddressRepository;
 import be.TFTIC.Tournoi.dal.repositories.PlaceRepository;
+import be.TFTIC.Tournoi.dal.repositories.TournamentRegisterTempRepository;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
-import be.TFTIC.Tournoi.dl.entities.Address;
-import be.TFTIC.Tournoi.dl.entities.Place;
-import be.TFTIC.Tournoi.dl.entities.User;
+import be.TFTIC.Tournoi.dl.entities.*;
+import be.TFTIC.Tournoi.dl.enums.Division;
+import be.TFTIC.Tournoi.dl.enums.TypeTournament;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @Configuration
@@ -26,14 +25,21 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initUsers(UserRepository userRepository) {
         return args -> {
-            if (userRepository.count() == 0) { // To avoid duplicate entries
-                userRepository.save(new User(null, "adminUser", "Admin", "User", "admin@example.com", 0, passwordEncoder.encode("admin123"), UserRole.ADMIN,new ArrayList<>()));
-                userRepository.save(new User(null, "johnDoe", "John", "Doe", "john.doe@example.com", 0, passwordEncoder.encode("password1"), UserRole.USER,new ArrayList<>()));
-                userRepository.save(new User(null, "janeDoe", "Jane", "Doe", "jane.doe@example.com", 0, passwordEncoder.encode("password2"), UserRole.USER,new ArrayList<>()));
-                userRepository.save(new User(null, "samSmith", "Sam", "Smith", "sam.smith@example.com", 0, passwordEncoder.encode("password3"), UserRole.USER,new ArrayList<>()));
-                userRepository.save(new User(null, "lisaJones", "Lisa", "Jones", "lisa.jones@example.com", 0, passwordEncoder.encode("password4"), UserRole.USER,new ArrayList<>()));
-                userRepository.save(new User(null, "mikeBrown", "Mike", "Brown", "mike.brown@example.com", 0, passwordEncoder.encode("password5"), UserRole.USER,new ArrayList<>()));
-                userRepository.save(new User(null, "lucyDavis", "Lucy", "Davis", "lucy.davis@example.com", 0, passwordEncoder.encode("password6"), UserRole.USER,new ArrayList<>()));
+            for (int i = 1; i <= 35; i++) {
+                User user = new User();
+                user.setUsername("test" + i);
+                user.setFirstname("Firstname" + i);
+                user.setLastname("Lastname" + i);
+                user.setEmail("test" + i + "@test.com");
+
+                // Créer un Ranking personnalisé pour chaque utilisateur
+                Ranking ranking = new Ranking();
+                ranking.setDivision(i % 2 == 0 ? Division.CHALLENGER : Division.BRONZE);
+                user.setRanking(ranking);
+                user.setPassword(passwordEncoder.encode("password" + i));
+
+                // Sauvegarder l'utilisateur avec son ranking personnalisé
+                userRepository.save(user);
             }
         };
     }

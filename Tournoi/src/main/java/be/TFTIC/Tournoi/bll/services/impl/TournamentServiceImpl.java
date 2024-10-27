@@ -1,5 +1,6 @@
 package be.TFTIC.Tournoi.bll.services.impl;
 
+import be.TFTIC.Tournoi.bll.exception.exist.DoNotExistException;
 import be.TFTIC.Tournoi.bll.services.*;
 import be.TFTIC.Tournoi.dal.repositories.TournamentRegisterTempRepository;
 import be.TFTIC.Tournoi.dal.repositories.TournamentRepository;
@@ -19,16 +20,17 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class TournamentServiceImpl implements TournamentService {
+public class TournamentServiceImpl implements TournamentService, TournamentRegisterService {
 
     private final TournamentRepository tournamentRepository;
-    private final TeamRepository teamRepository;
+
     private final MatchService matchService;
     private final UserService userService;
     private final RankingService rankingService;
     private final TournamentRegisterTempRepository tournamentRegisterTempRepository;
     private final TeamService teamService;
     private final ClanService clanService;
+
 
     //region UTILS
     private List<String> nextTurnTeam = new ArrayList<>();
@@ -44,7 +46,7 @@ public class TournamentServiceImpl implements TournamentService {
         return tournamentRepository.findById(id)
                 .orElseThrow(() -> new DoNotExistException("The tournament with id " + id + " not found"));
     }
-
+//region Create Tournament
     @Override
     public Tournament createNewTournament(Division division, TypeTournament typeTournament) {
         Tournament tournament = new Tournament();
@@ -214,4 +216,139 @@ public class TournamentServiceImpl implements TournamentService {
     public List<Tournament> getTournamentsByDivisionAndType(Division division, TypeTournament typeTournament) {
         return tournamentRepository.findTournamentsByDivisionAndType(division, typeTournament);
     }
+    //endregion
+
+    //region Register Tournament
+    // TODO verif du isCompleted
+    @Override
+    public TournamentRegisterTemp save(TournamentRegisterTemp tournamentRegisterTemp) {
+        return tournamentRegisterTempRepository.save(tournamentRegisterTemp);
+    }
+
+    @Override
+    public List<TournamentRegisterTemp> findAll() {
+        return tournamentRegisterTempRepository.findAll();
+    }
+
+    @Override
+    public TournamentRegisterTemp findById(Long id) {
+        return tournamentRegisterTempRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cette inscription n'existe pas"));
+    }
+
+    @Override
+    public void delete(TournamentRegisterTemp tournamentRegisterTemp) {
+        tournamentRegisterTempRepository.delete(tournamentRegisterTemp);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+
+    }
+
+    @Override
+    public void update(TournamentRegisterTemp tournamentRegisterTemp) {
+
+    }
+
+    @Override
+    public List<TournamentRegisterTemp> findAllByTournamentId(Long tournamentId) {
+        return tournamentRegisterTempRepository.findAllByTournamentId(tournamentId);
+    }
+
+    @Override
+    public TournamentRegisterTemp inscriptionSolo(Long userId, TypeTournament typeTournament) {
+        User user = userService.getById(userId);
+        Division division = user.getRanking().getDivision();
+        return matchMakingTournament(userId, null, null, division, typeTournament);
+    }
+    @Override
+    public TournamentRegisterTemp inscriptionTeam(Long teamId, TypeTournament typeTournament) {
+        String teamIdString = String.valueOf(teamId);
+        Team team = teamService.getTeamById(teamIdString);
+        Division division = team.getRanking().getDivision();
+        return matchMakingTournament(null, teamId, null, division, typeTournament);
+    }
+
+    @Override
+    public TournamentRegisterTemp inscriptionClan(Long clanId, TypeTournament typeTournament) {
+        Clan clan = clanService.getById(clanId);
+        Division division = clan.getRanking().getDivision();
+        return matchMakingTournament(null, null, clanId, division, typeTournament);
+    }
+    // TODO Créer peut etre un DTO pour remplacer les surcharges ?
+    @Override
+    public TournamentRegisterTemp matchMakingTournament(Long userId, Long teamId, Long clanId, Division division, TypeTournament typeTournament) {
+        List<Tournament> tournaments = getTournamentsByDivisionAndType(division, typeTournament);
+        String nameDivision = division.name();
+
+        TournamentRegisterTemp tournamentRegisterTemp = new TournamentRegisterTemp();
+
+        if (tournaments.isEmpty()) {
+            Tournament newTournament = createNewTournament(division, typeTournament);
+
+            if (userId != null) {
+                tournamentRegisterTemp.setUserId(userId);
+                newTournament.setNbPlace(newTournament.getNbPlace() + 1);
+            }
+            if (teamId != null) {
+                tournamentRegisterTemp.setTeamId(teamId);
+                newTournament.setNbPlace(newTournament.getNbPlace() + 2);
+            }
+            if (clanId != null) {
+                tournamentRegisterTemp.setClanId(clanId);
+                newTournament.setNbPlace(newTournament.getNbPlace() + 2);
+            }
+
+            tournamentRegisterTemp.setTournamentId(newTournament.getTournamentId());
+            tournamentRegisterTemp.setRegistrationType(nameDivision);
+            return tournamentRegisterTempRepository.save(tournamentRegisterTemp);
+
+        } else {
+            Tournament tournament = tournaments.getFirst();
+
+            if (userId != null) {
+                tournamentRegisterTemp.setUserId(userId);
+                tournament.setNbPlace(tournament.getNbPlace() + 1);
+                checkIsCompleted(tournament);
+            }
+            if (teamId != null) {
+                tournamentRegisterTemp.setTeamId(teamId);
+                tournament.setNbPlace(tournament.getNbPlace() + 2);
+                checkIsCompleted(tournament);
+            }
+            if (clanId != null) {
+                tournamentRegisterTemp.setClanId(clanId);
+                tournament.setNbPlace(tournament.getNbPlace() + 2);
+                checkIsCompleted(tournament);
+            }
+
+            tournamentRegisterTemp.setTournamentId(tournament.getTournamentId());
+            tournamentRegisterTemp.setRegistrationType(nameDivision);
+            return tournamentRegisterTempRepository.save(tournamentRegisterTemp);
+        }
+    }
+
+    @Override
+    public void checkIsCompleted(Tournament tournament) {
+        int typeTournamentOrdinal = tournament.getTypeTournament().ordinal();
+        int nbPlaceTournament = tournament.getNbPlace();
+
+        if (typeTournamentOrdinal == 0 && nbPlaceTournament == 8) {
+            tournament.setCompleted(true);
+            startTournament(tournament);
+        } else if (typeTournamentOrdinal == 1 && nbPlaceTournament == 32) {
+            tournament.setCompleted(true);
+            startTournament(tournament);
+        } else if (typeTournamentOrdinal == 2 && nbPlaceTournament == 64) {
+            tournament.setCompleted(true);
+            startTournament(tournament);
+        } else {
+            tournament.setCompleted(false);
+        }
+
+        update(tournament.getTournamentId(), tournament);
+    }
+    //endregion
+
 }

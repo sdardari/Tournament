@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Include
     private String email;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "ranking_id", referencedColumnName = "id")
     private Ranking ranking;
 
@@ -61,16 +60,11 @@ public class User implements UserDetails {
     @OneToMany(mappedBy="user")
     private List<FriendShip> friendShips;
 
-    public User(String username, String firstname, String lastname, String email, String password, UserRole role, Clan clan) {
-        this.username = username;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
-        this.password = password;
-        this.role = UserRole.USER;
-        this.clan = clan;
-    }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
 
     public User(String username, String firstname, String lastname, String email, String password) {
         this.username = username;
@@ -78,19 +72,17 @@ public class User implements UserDetails {
         this.lastname = lastname;
         this.email = email;
         this.password = password;
-        this.role = UserRole.USER;
-        this.ranking = new Ranking();
     }
 
-    public <E> User(Object o, String adminUser, String admin, String user, String mail, int i, String admin123, UserRole userRole, ArrayList<E> es) {
+    @PrePersist
+    protected void onCreate() {
+        if (this.role == null) {
+            this.role = UserRole.USER;
+        }
+        if (this.ranking == null) {
+            this.ranking = new Ranking();
+        }
     }
-
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
-
 
     @Override
     public boolean isAccountNonExpired() {
