@@ -9,15 +9,17 @@ public record RankingDetailDTO(
         int leaguePoints,
         int wins,
         int losses,
+        int winTournament,
         String division
 ) {
-    public static RankingDetailDTO toEntity(Ranking ranking) {
+    public static RankingDetailDTO fromEntity(Ranking ranking) {
         return new RankingDetailDTO(
                 ranking.getId(),
                 ranking.getNbMatches(),
                 ranking.getLeaguePoints(),
                 ranking.getWins(),
                 ranking.getLosses(),
+                ranking.getWinTournament(),
                 ranking.getDivision().name()
         );
     }

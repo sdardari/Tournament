@@ -26,7 +26,7 @@ public class RankingServiceImpl implements RankingService {
     @Override
     public List<RankingDetailDTO> getAllRankings() {
         return rankingRepository.findAll().stream()
-                .map(RankingDetailDTO::toEntity).collect(Collectors.toList());
+                .map(RankingDetailDTO::fromEntity).collect(Collectors.toList());
     }
 
     @Override
