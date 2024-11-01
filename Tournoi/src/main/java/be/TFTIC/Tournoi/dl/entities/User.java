@@ -8,7 +8,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "User_")
@@ -52,10 +54,12 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false,length = 20)
     private UserRole role;
-    // Many-to-one relation with Clan
-    @ManyToOne
-    @JoinColumn(name = "clan_id")
-    private Clan clan;
+
+    @ManyToMany(mappedBy = "members")
+    private Set<Clan> clans = new HashSet<>();
+
+    @ManyToMany(mappedBy = "users")
+    private Set<Team> teams = new HashSet<>();
 
     @OneToMany(mappedBy="user")
     private List<FriendShip> friendShips;

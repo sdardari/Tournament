@@ -57,6 +57,12 @@ public class ClanServiceImpl implements ClanService{
 
     }
 
+    public void addMemberToClanWithoutCheck(Clan clan, User user, ClanRole role) {
+      clan.getMembers().add(user);
+      clan.getRoles().put(user.getId(), role);
+      clanRepository.save(clan);
+    }
+
     @Override
     public ClanDTO getClanById(long id) {
         return ClanDTO.fromEntity(getById(id), "Result of your research");
@@ -111,7 +117,7 @@ public class ClanServiceImpl implements ClanService{
     @Override
     public MessageDTO leaveClan(Long clanId, Long userId) {
         Clan clan = getById(clanId);
-        
+
         boolean isMember = clan.getMembers().stream()
                 .anyMatch(member -> member.getId().equals(userId));
 
@@ -122,7 +128,7 @@ public class ClanServiceImpl implements ClanService{
                         .map(Map.Entry::getKey)
                         .findFirst()
                         .orElse(null);
-                
+
                 if (newPresidentId != null) {
                     clan.getRoles().put(newPresidentId, ClanRole.PRESIDENT);
                 } else {

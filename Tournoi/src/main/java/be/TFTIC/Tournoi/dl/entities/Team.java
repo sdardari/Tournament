@@ -3,7 +3,9 @@ package be.TFTIC.Tournoi.dl.entities;
 import lombok.*;
 import jakarta.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "teams")
@@ -17,18 +19,13 @@ public class Team {
 
     private String name;
 
-    // Many-to-one relation with Players
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name= "users",
             joinColumns = @JoinColumn(name = "team_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> users;
-
-//    public Team(){
-//        this.users = new ArrayList<>();
-//    }
 
     @OneToOne
     @JoinColumn(name = "ranking_id", referencedColumnName = "id")

@@ -11,6 +11,7 @@ import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.User.UserForm;
+import be.TFTIC.Tournoi.pl.models.User.UserRankingDTO;
 import be.TFTIC.Tournoi.pl.models.auth.UserRegisterForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -50,7 +51,13 @@ public class UserServiceImpl implements UserService {
                 .map(UserDTO::fromEntity).collect(Collectors.toList());
     }
 
-    @Override
+  @Override
+  public List<UserRankingDTO> getAllUserRankings() {
+    return userRepository.findAll().stream()
+      .map(UserRankingDTO::fromEntity).collect(Collectors.toList());
+  }
+
+  @Override
     public UserDTO updateUser(Long id, UserRegisterForm userForm) {
         User user = userRepository.findById(id).orElseThrow(() ->
                 new DoNotExistException("User with id " + id + " doesn't exist."));

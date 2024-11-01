@@ -23,6 +23,11 @@ public class TeamServiceImpl implements TeamService {
                 .orElseThrow(() -> new RuntimeException(sb.append("Team ").append(id).append(" not found").toString()));
     }
 
+    public void addMemberToTeamWithoutCheck(Team team, User user) {
+      team.getUsers().add(user);
+      teamRepository.save(team);
+    }
+
     @Override
     public List<Team> getAllTeams() {
         return teamRepository.findAll();

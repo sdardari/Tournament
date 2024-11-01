@@ -5,6 +5,7 @@ import be.TFTIC.Tournoi.bll.services.UserService;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
 import be.TFTIC.Tournoi.pl.models.User.UserDTO;
 import be.TFTIC.Tournoi.pl.models.User.UserForm;
+import be.TFTIC.Tournoi.pl.models.User.UserRankingDTO;
 import be.TFTIC.Tournoi.pl.models.auth.UserRegisterForm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,12 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<List<UserRankingDTO>> getAllUserRanking() {
+      List<UserRankingDTO> usersRankings = userService.getAllUserRankings();
+      return ResponseEntity.ok(usersRankings);
     }
 
     // Mettre à jour les informations d'un utilisateur

@@ -34,15 +34,13 @@ public class Clan {
     }
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_clan",
-            joinColumns = @JoinColumn(name = "clan_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private Set<User> members = new HashSet<>();
-
-
+  @ManyToMany(fetch = FetchType.EAGER)
+  @JoinTable(
+    name = "user_clan",
+    joinColumns = @JoinColumn(name = "clan_id"),
+    inverseJoinColumns = @JoinColumn(name = "user_id")
+  )
+  private Set<User> members = new HashSet<>();
 
     @ManyToOne
     private Chat chatId;
