@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/clan")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class ClanController {
 
     private final UserService userService;

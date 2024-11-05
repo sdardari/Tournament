@@ -2,9 +2,11 @@ package be.TFTIC.Tournoi.dal;
 
 
 import be.TFTIC.Tournoi.dal.repositories.AddressRepository;
+import be.TFTIC.Tournoi.dal.repositories.ClanRepository;
 import be.TFTIC.Tournoi.dal.repositories.PlaceRepository;
 import be.TFTIC.Tournoi.dal.repositories.UserRepository;
 import be.TFTIC.Tournoi.dl.entities.Address;
+import be.TFTIC.Tournoi.dl.entities.Clan;
 import be.TFTIC.Tournoi.dl.entities.Place;
 import be.TFTIC.Tournoi.dl.entities.User;
 import be.TFTIC.Tournoi.dl.enums.UserRole;
@@ -25,30 +27,30 @@ public class DataInitializer {
 
     @Bean
     CommandLineRunner initUsers(UserRepository userRepository) {
-        return args -> {
-            if (userRepository.count() == 0) { // To avoid duplicate entries
-                userRepository.save(new User(null, "adminUser", "Admin", "User", "admin@example.com", 0, passwordEncoder.encode("admin123"), UserRole.ADMIN,new ArrayList<>()));
-                userRepository.save(new User(null, "johnDoe", "John", "Doe", "john.doe@example.com", 0, passwordEncoder.encode("password1"), UserRole.USER,new ArrayList<>()));
-                userRepository.save(new User(null, "janeDoe", "Jane", "Doe", "jane.doe@example.com", 0, passwordEncoder.encode("password2"), UserRole.USER,new ArrayList<>()));
-                userRepository.save(new User(null, "samSmith", "Sam", "Smith", "sam.smith@example.com", 0, passwordEncoder.encode("password3"), UserRole.USER,new ArrayList<>()));
-                userRepository.save(new User(null, "lisaJones", "Lisa", "Jones", "lisa.jones@example.com", 0, passwordEncoder.encode("password4"), UserRole.USER,new ArrayList<>()));
-                userRepository.save(new User(null, "mikeBrown", "Mike", "Brown", "mike.brown@example.com", 0, passwordEncoder.encode("password5"), UserRole.USER,new ArrayList<>()));
-                userRepository.save(new User(null, "lucyDavis", "Lucy", "Davis", "lucy.davis@example.com", 0, passwordEncoder.encode("password6"), UserRole.USER,new ArrayList<>()));
-            }
-        };
+      return args -> {
+        if (userRepository.count() == 0) { // To avoid duplicate entries
+          userRepository.save(new User(null, "adminUser", "Admin", "User", "admin@example.com", 0, passwordEncoder.encode("admin123"), UserRole.ADMIN, new ArrayList<>()));
+          userRepository.save(new User(null, "johnDoe", "John", "Doe", "john.doe@example.com", 0, passwordEncoder.encode("password1"), UserRole.USER, new ArrayList<>()));
+          userRepository.save(new User(null, "janeDoe", "Jane", "Doe", "jane.doe@example.com", 0, passwordEncoder.encode("password2"), UserRole.USER, new ArrayList<>()));
+          userRepository.save(new User(null, "samSmith", "Sam", "Smith", "sam.smith@example.com", 0, passwordEncoder.encode("password3"), UserRole.USER, new ArrayList<>()));
+          userRepository.save(new User(null, "lisaJones", "Lisa", "Jones", "lisa.jones@example.com", 0, passwordEncoder.encode("password4"), UserRole.USER, new ArrayList<>()));
+          userRepository.save(new User(null, "mikeBrown", "Mike", "Brown", "mike.brown@example.com", 0, passwordEncoder.encode("password5"), UserRole.USER, new ArrayList<>()));
+          userRepository.save(new User(null, "lucyDavis", "Lucy", "Davis", "lucy.davis@example.com", 0, passwordEncoder.encode("password6"), UserRole.USER, new ArrayList<>()));
+        }
+      };
     }
 
     @Bean
-    CommandLineRunner initAddresses(AddressRepository addressRepository) {
-        return args -> {
-            if (addressRepository.count() == 0) { // Vérifie que les adresses n'ont pas déjà été insérées
-                addressRepository.save(new Address(null, "Main Street", "123", "1000", "Bruxelles", "Belgique"));
-                addressRepository.save(new Address(null, "Avenue des Champs-Élysées", "12", "75008", "Paris", "France"));
-                addressRepository.save(new Address(null, "Oxford Street", "45", "W1D", "London", "United Kingdom"));
-                addressRepository.save(new Address(null, "Friedrichstrasse", "101", "10117", "Berlin", "Germany"));
-                addressRepository.save(new Address(null, "Piazza del Popolo", "3", "00187", "Rome", "Italy"));
-            }
-        };
+    CommandLineRunner initClans(ClanRepository clanRepository) {
+      return args -> {
+        // Vérifie si les clans n'ont pas déjà été insérés
+        if (clanRepository.count() == 0) {
+          clanRepository.save(new Clan("Warriors", false, 1000));
+          clanRepository.save(new Clan("Shadow Hunters", true, 2000));
+          clanRepository.save(new Clan("Dragon Slayers", false, 1500));
+          clanRepository.save(new Clan("Mystic Knights", true, 500));
+        }
+      };
     }
     @Bean
     CommandLineRunner initPlaces(PlaceRepository placeRepository, AddressRepository addressRepository) {
